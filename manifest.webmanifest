@@ -1,0 +1,14 @@
+{
+  "name": "First Minutes",
+  "short_name": "First Minutes",
+  "description": "What to do in the first minutes of an emergency, step by step, with pictures.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F4EF",
+  "theme_color": "#F6F4EF",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

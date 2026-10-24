@@ -20,27 +20,63 @@ const chip = (x, y, t, c = K.ink) => { const w = t.length * 8.4 + 24; return `<r
 const bubble = (x, y, w, t, tx, ty) => `<polygon points="${P([[tx - 10, y + 34], [tx + 6, y + 34], [tx, ty]])}" fill="#fff" stroke="${K.ink}" stroke-width="3" stroke-linejoin="round"/><rect x="${x}" y="${y}" width="${w}" height="38" rx="19" fill="#fff" stroke="${K.ink}" stroke-width="3"/><rect x="${tx - 9}" y="${y + 30}" width="14" height="6" fill="#fff"/>` + txt(x + w / 2, y + 25, t, 16);
 const hits = (x, y) => line([[x - 22, y - 16], [x - 30, y - 24]], K.act, 5) + line([[x, y - 24], [x, y - 36]], K.act, 5) + line([[x + 22, y - 16], [x + 30, y - 24]], K.act, 5);
 
-// A figure is a head, a thick torso line and limb lines; far limbs are a darker shade and sit behind the torso.
-function fig(f) {
-  const s = f.s || 1, lw = 14 * s, ll = 16 * s, tw = 30 * s, hr = 17 * s;
-  let o = '';
-  (f.back || []).forEach(a => o += line(a, f.cf, lw));
-  if (f.legF) o += line(f.legF, f.cf, ll);
-  o += line([f.neck, f.hip], f.c, tw);
-  if (f.legN) o += line(f.legN, f.c, ll);
-  o += dot(f.head[0], f.head[1], hr, f.c);
-  (f.front || []).forEach(a => o += line(a, f.c, lw));
+// People: skin, hair, a shirt and trousers. The helper wears blue, the person who needs help wears amber.
+// Far limbs use a darker shade and sit behind the body. fa = the direction the face looks, in degrees (0 right, 90 down, 180 left, -90 up), or 'front'.
+const PAL = {
+  res: { shirt: '#2F6FED', shirtF: '#1D4BAF', pants: '#2E3E5C', pantsF: '#222F47', skin: '#C98A5E', skinF: '#A9703F', hair: '#3E2A20' },
+  vic: { shirt: '#F2A541', shirtF: '#D98A2B', pants: '#5B6577', pantsF: '#444C59', skin: '#EBBE95', skinF: '#D29A6C', hair: '#8B6A52' },
+};
+const SHOE = '#2B2F36';
+const arm = (pts, shirt, skin, w) => line(pts.slice(0, 2), shirt, w) + (pts[2] ? line(pts.slice(1), skin, w * 0.84) + dot(pts[2][0], pts[2][1], w * 0.62, skin) : '');
+function leg(pts, pants, w, fa) {
+  let o = line(pts, pants, w);
+  if (pts.length > 2) {
+    const [x, y] = pts[pts.length - 1], d = (typeof fa === 'number' ? fa : 90) * Math.PI / 180;
+    o += `<ellipse cx="${x + Math.cos(d) * w * 0.45}" cy="${y + Math.sin(d) * w * 0.45}" rx="${w * 0.85}" ry="${w * 0.48}" fill="${SHOE}" transform="rotate(${(typeof fa === 'number' ? fa : 0)} ${x + Math.cos(d) * w * 0.45} ${y + Math.sin(d) * w * 0.45})"/>`;
+  }
   return o;
 }
-const R = f => fig({ c: K.res, cf: K.resF, ...f });
-const V = f => fig({ c: K.vic, cf: K.vicF, ...f });
+function face(hx, hy, nx, ny, r, fa, pal, closed) {
+  let ux = hx - nx, uy = hy - ny; const L = Math.hypot(ux, uy) || 1; ux /= L; uy /= L; // up: neck to head
+  if (fa === 'front') {
+    let o = dot(hx + ux * r * 0.18, hy + uy * r * 0.18, r * 1.04, pal.hair) + dot(hx, hy, r, pal.skin);
+    const px = -uy, py = ux;
+    [-1, 1].forEach(k => {
+      const ex = hx + px * r * 0.36 * k + ux * r * 0.05, ey = hy + py * r * 0.36 * k + uy * r * 0.05;
+      o += closed ? `<path d="M${ex - r * 0.16},${ey} q${r * 0.16},${r * 0.14} ${r * 0.32},0" stroke="#4A3226" stroke-width="${r * 0.11}" fill="none" stroke-linecap="round"/>` : dot(ex, ey, r * 0.1, '#2A1E17');
+    });
+    return o;
+  }
+  const d = fa * Math.PI / 180, fx = Math.cos(d), fy = Math.sin(d);
+  let o = dot(hx - fx * r * 0.2 + ux * r * 0.14, hy - fy * r * 0.2 + uy * r * 0.14, r * 1.02, pal.hair);
+  o += dot(hx, hy, r, pal.skin);
+  o += dot(hx + fx * r * 0.94 - ux * r * 0.06, hy + fy * r * 0.94 - uy * r * 0.06, r * 0.2, pal.skin);
+  o += `<ellipse cx="${hx - fx * r * 0.14}" cy="${hy - fy * r * 0.14}" rx="${r * 0.17}" ry="${r * 0.22}" fill="${pal.skinF}"/>`;
+  const ex = hx + fx * r * 0.52 + ux * r * 0.16, ey = hy + fy * r * 0.52 + uy * r * 0.16;
+  o += closed ? `<path d="M${ex - fx * r * 0.15 - ux * r * 0.02},${ey - fy * r * 0.15 - uy * r * 0.02} q${fx * r * 0.15 - ux * r * 0.14},${fy * r * 0.15 - uy * r * 0.14} ${fx * r * 0.3},${fy * r * 0.3}" stroke="#4A3226" stroke-width="${r * 0.11}" fill="none" stroke-linecap="round"/>` : dot(ex, ey, r * 0.1, '#2A1E17');
+  return o;
+}
+function fig(f) {
+  const s = f.s || 1, lw = 15 * s, ll = 17 * s, tw = 32 * s, hr = 18 * s, p = f.pal, fa = f.fa === undefined ? 180 : f.fa;
+  let o = '';
+  (f.back || []).forEach(a => o += arm(a, p.shirtF, p.skinF, lw));
+  if (f.legF) o += leg(f.legF, p.pantsF, ll, fa);
+  o += line([f.neck, f.head], p.skin, hr * 0.6);
+  o += line([f.neck, f.hip], p.shirt, tw);
+  if (f.legN) o += leg(f.legN, p.pants, ll, fa);
+  o += face(f.head[0], f.head[1], f.neck[0], f.neck[1], hr, fa, p, f.closed);
+  (f.front || []).forEach(a => o += arm(a, p.shirt, p.skin, lw));
+  return o;
+}
+const R = f => fig({ pal: PAL.res, ...f });
+const V = f => fig({ pal: PAL.vic, ...f });
 
 // Lying person, head on the left, used by CPR and bleeding scenes.
-const lying = (s = 1, x = 0) => V({ s, head: [66 + x, 206], neck: [94 + x, 210], hip: [198, 212], legF: [[198, 208], [250, 206], [304, 204]], legN: [[198, 215], [250, 217], [304, 219]], front: [[[104 + x, 216], [146, 223], [184, 224]]] });
+const lying = (s = 1, x = 0) => V({ s, fa: -90, closed: true, head: [66 + x, 206], neck: [94 + x, 210], hip: [198, 212], legF: [[198, 208], [250, 206], [304, 204]], legN: [[198, 215], [250, 217], [304, 219]], front: [[[104 + x, 216], [146, 223], [184, 224]]] });
 
 const ART = {
   chokeSign: () => floor() +
-    V({ head: [125, 52], neck: [125, 86], hip: [125, 160], legF: [[130, 160], [136, 204], [140, 244]], legN: [[120, 160], [115, 204], [111, 244]],
+    V({ fa: 0, head: [125, 52], neck: [125, 86], hip: [125, 160], legF: [[130, 160], [136, 204], [140, 244]], legN: [[120, 160], [115, 204], [111, 244]],
       front: [[[118, 98], [94, 120], [119, 82]], [[132, 98], [156, 120], [131, 82]]] }) +
     line([[96, 34], [102, 40]], K.act, 5) + line([[125, 22], [125, 29]], K.act, 5) + line([[154, 34], [148, 40]], K.act, 5) +
     R({ head: [254, 62], neck: [254, 94], hip: [254, 166], legN: [[250, 166], [246, 206], [242, 244]], legF: [[258, 166], [264, 206], [268, 244]],
@@ -56,7 +92,7 @@ const ART = {
   backBlows: () => floor() +
     R({ head: [258, 46], neck: [256, 80], hip: [258, 154], legN: [[254, 154], [250, 200], [246, 244]], legF: [[262, 154], [270, 200], [276, 244]],
       back: [[[252, 92], [212, 128], [150, 140]]] }) +
-    V({ head: [102, 96], neck: [128, 106], hip: [188, 150], legN: [[184, 150], [180, 198], [176, 244]], legF: [[194, 150], [200, 198], [206, 244]],
+    V({ fa: 150, head: [102, 96], neck: [128, 106], hip: [188, 150], legN: [[184, 150], [180, 198], [176, 244]], legF: [[194, 150], [200, 198], [206, 244]],
       back: [[[142, 112], [148, 144], [148, 172]]], front: [[[136, 114], [130, 146], [128, 176]]] }) +
     dot(150, 141, 9, K.res) +
     line([[254, 92], [212, 64], [162, 96]], K.res, 14) + dot(160, 98, 10, K.res) +
@@ -76,7 +112,7 @@ const ART = {
     txt(90, 186, '5 back blows', 15) + txt(272, 186, '5 belly thrusts', 15) + txt(180, 252, 'until it comes out', 15, K.act),
 
   collapse: () => floor(232) + lying() +
-    R({ head: [119, 86], neck: [134, 104], hip: [182, 162], legN: [[182, 162], [174, 216]], back: [[[136, 108], [135, 150], [134, 188]]], front: [[[130, 110], [129, 150], [128, 190]]] }) +
+    R({ fa: 120, head: [119, 86], neck: [134, 104], hip: [182, 162], legN: [[182, 162], [174, 216]], back: [[[136, 108], [135, 150], [134, 188]]], front: [[[130, 110], [129, 150], [128, 190]]] }) +
     chip(214, 40, 'START CPR', K.act),
 
   babyBack: () =>
@@ -96,13 +132,13 @@ const ART = {
     arrow(232, 50, 212, 92) + badge(322, 76, '5x') + chip(12, 12, 'FACE UP, HEAD LOW'),
 
   cprCheck: () => floor(232) +
-    R({ head: [134, 76], neck: [150, 98], hip: [182, 154], legN: [[182, 154], [174, 214]],
+    R({ fa: 120, head: [134, 76], neck: [150, 98], hip: [182, 154], legN: [[182, 154], [174, 214]],
       back: [[[156, 106], [132, 148], [108, 196]]] }) + lying() +
     line([[150, 108], [122, 150], [98, 198]], K.res, 14) +
     bubble(10, 10, 140, 'Are you OK?', 112, 60) + chip(214, 40, 'BREATHING?', K.ink),
 
   recovery: () =>
-    V({ head: [70, 128], neck: [96, 130], hip: [206, 132], legF: [[206, 128], [262, 120], [320, 116]], legN: [[206, 136], [240, 190], [292, 174]],
+    V({ fa: 200, closed: true, head: [70, 128], neck: [96, 130], hip: [206, 132], legF: [[206, 128], [262, 120], [320, 116]], legN: [[206, 136], [240, 190], [292, 174]],
       back: [[[104, 124], [112, 72], [152, 60]]], front: [[[108, 138], [112, 178], [80, 146]]] }) +
     chip(196, 20, 'ON THEIR SIDE', K.green) + txt(250, 236, 'top knee bent, hand under cheek', 14, K.ink, 'middle', 700),
   cprCall: () =>
@@ -127,13 +163,13 @@ const ART = {
     [146, 158, 170, 182].map(y => line([[218, y], [250, y + 2]], K.res, 11)).join('') + line([[186, 140], [208, 118]], K.res, 11) +
     chip(108, 222, 'CENTER OF THE CHEST', K.act),
   cprPush: () => floor(232) +
-    R({ head: [119, 86], neck: [134, 104], hip: [182, 162], legN: [[182, 162], [174, 216]], back: [[[136, 108], [135, 150], [134, 188]]] }) +
+    R({ fa: 120, head: [119, 86], neck: [134, 104], hip: [182, 162], legN: [[182, 162], [174, 216]], back: [[[136, 108], [135, 150], [134, 188]]] }) +
     lying() + line([[130, 110], [129, 150], [128, 190]], K.res, 14) +
     arrow(88, 112, 88, 170) + txt(62, 150, '2 in', 18, K.act) + chip(188, 36, '100 TO 120 / MIN', K.act),
 
   cprPushChild: () => floor(232) +
-    R({ head: [123, 86], neck: [138, 104], hip: [184, 162], legN: [[184, 162], [176, 216]], back: [[[142, 110], [118, 152], [96, 198]]] }) +
-    V({ s: .75, head: [92, 212], neck: [112, 214], hip: [186, 216], legF: [[186, 213], [222, 212], [258, 211]], legN: [[186, 219], [222, 221], [258, 223]], front: [[[118, 220], [148, 226], [174, 226]]] }) +
+    R({ fa: 120, head: [123, 86], neck: [138, 104], hip: [184, 162], legN: [[184, 162], [176, 216]], back: [[[142, 110], [118, 152], [96, 198]]] }) +
+    V({ s: .75, fa: -90, closed: true, head: [92, 212], neck: [112, 214], hip: [186, 216], legF: [[186, 213], [222, 212], [258, 211]], legN: [[186, 219], [222, 221], [258, 223]], front: [[[118, 220], [148, 226], [174, 226]]] }) +
     line([[136, 110], [135, 150], [134, 196]], K.res, 14) +
     arrow(94, 112, 94, 166) + txt(64, 146, '2 in', 18, K.act) + chip(214, 36, '1 OR 2 HANDS', K.ink),
   cprPushBaby: () =>
@@ -174,7 +210,7 @@ const ART = {
     chip(12, 226, 'SOAKED? ADD MORE ON TOP', K.ink) + chip(236, 12, 'DON’T LIFT', K.act),
 
   bleedTq: () =>
-    line([[-20, 150], [380, 150]], K.vic, 96) +
+    line([[-20, 150], [380, 150]], PAL.vic.skin, 96) + line([[-40, 150], [40, 150]], PAL.vic.shirt, 108) +
     line([[262, 140], [300, 160]], K.act, 8) +
     `<rect x="150" y="94" width="34" height="112" rx="8" fill="${K.ink}"/><rect x="132" y="80" width="70" height="16" rx="8" fill="#4B5565"/>` +
     arrow(204, 226, 254, 226, K.act, 4) + arrow(250, 226, 200, 226, K.act, 4) + txt(228, 252, '2 to 3 in', 15, K.act) +
@@ -210,10 +246,10 @@ const ART = {
     txt(180, 252, 'speaker on', 15),
 
   // Small figures for the "who needs help" buttons.
-  whoAdult: () => V({ head: [180, 52], neck: [180, 86], hip: [180, 162], legF: [[186, 162], [192, 206], [196, 246]], legN: [[174, 162], [168, 206], [164, 246]], back: [[[186, 98], [204, 136], [208, 168]]], front: [[[174, 98], [156, 136], [152, 168]]] }),
-  whoAdultChild: () => V({ head: [140, 52], neck: [140, 86], hip: [140, 162], legF: [[146, 162], [152, 206], [156, 246]], legN: [[134, 162], [128, 206], [124, 246]], back: [[[146, 98], [166, 134], [176, 150]]], front: [[[134, 98], [116, 136], [112, 168]]] }) +
-    V({ s: .68, head: [214, 124], neck: [214, 148], hip: [214, 198], legF: [[218, 198], [222, 222], [224, 246]], legN: [[210, 198], [206, 222], [204, 246]], back: [[[218, 156], [230, 182], [232, 200]]], front: [[[210, 156], [194, 160], [184, 152]]] }),
-  whoChild: () => V({ s: .78, head: [180, 92], neck: [180, 120], hip: [180, 180], legF: [[184, 180], [189, 214], [192, 246]], legN: [[176, 180], [171, 214], [168, 246]], back: [[[184, 128], [200, 158], [204, 184]]], front: [[[176, 128], [160, 158], [156, 184]]] }),
+  whoAdult: () => V({ fa: 'front', head: [180, 52], neck: [180, 86], hip: [180, 162], legF: [[186, 162], [192, 206], [196, 246]], legN: [[174, 162], [168, 206], [164, 246]], back: [[[186, 98], [204, 136], [208, 168]]], front: [[[174, 98], [156, 136], [152, 168]]] }),
+  whoAdultChild: () => V({ fa: 'front', head: [140, 52], neck: [140, 86], hip: [140, 162], legF: [[146, 162], [152, 206], [156, 246]], legN: [[134, 162], [128, 206], [124, 246]], back: [[[146, 98], [166, 134], [176, 150]]], front: [[[134, 98], [116, 136], [112, 168]]] }) +
+    V({ s: .68, fa: 'front', head: [214, 124], neck: [214, 148], hip: [214, 198], legF: [[218, 198], [222, 222], [224, 246]], legN: [[210, 198], [206, 222], [204, 246]], back: [[[218, 156], [230, 182], [232, 200]]], front: [[[210, 156], [194, 160], [184, 152]]] }),
+  whoChild: () => V({ s: .78, fa: 'front', head: [180, 92], neck: [180, 120], hip: [180, 180], legF: [[184, 180], [189, 214], [192, 246]], legN: [[176, 180], [171, 214], [168, 246]], back: [[[184, 128], [200, 158], [204, 184]]], front: [[[176, 128], [160, 158], [156, 184]]] }),
   whoBaby: () => V({ s: .62, head: [124, 170], neck: [140, 182], hip: [204, 194], legF: [[204, 190], [228, 176], [250, 188]], legN: [[204, 198], [222, 218], [246, 222]], back: [[[150, 182], [170, 166], [186, 160]]], front: [[[146, 190], [162, 212], [180, 218]]] }) + `<rect x="80" y="232" width="200" height="10" rx="5" fill="${K.floor}"/>`,
 };
 

@@ -17,7 +17,7 @@ const I = {
 const LOGO = '<svg viewBox="0 0 40 40" class="logo"><rect width="40" height="40" rx="11" fill="#14935F"/><path d="M16 8h8v8h8v8h-8v8h-8v-8H8v-8h8z" fill="#fff"/></svg>';
 
 // Crops that turn a full scene into a tile thumbnail.
-const CROP = { chokeSign: '50 12 150 112', cprPush: '34 66 290 216', bleedPress: '60 40 240 179' };
+const CROP = { chokeSign: '40 14 140 105', cprPush: '34 66 290 216', bleedPress: '50 44 260 195', heartSigns: '100 44 150 112', strokeFace: '60 52 180 135', epiThigh: '96 24 170 128', seizureSafe: '20 110 280 210', faintLegs: '20 90 320 240', burnCool: '30 30 240 180', poisonCall: '20 50 260 195', headStill: '0 70 300 225', boneStill: '30 70 280 210', drownReach: '20 56 300 225', sugarJuice: '20 80 320 240', inhaler: '20 50 280 210', heatTub: '24 70 280 210', hypoWrap: '20 100 320 240', elecOff: '30 30 280 210', nosePinch: '40 50 240 180', dogAway: '0 60 300 225', eyeRinse: '60 40 240 180' };
 const thumb = id => art(id).replace('viewBox="0 0 360 260"', `viewBox="${CROP[id] || '0 0 360 260'}" preserveAspectRatio="xMidYMid slice"`);
 
 // ---------- voice: a recorded clip for every screen (audio/<key>.mp3) ----------
@@ -58,6 +58,12 @@ const link = (...p) => '#/f/' + p.join('/');
 function route() {
   stopMetro(); stopSpeak();
   const [root, fid, vid, sid] = location.hash.replace(/^#\/?/, '').split('/');
+  if (root === 'family') return family();
+  if (root === 'kit') return kit();
+  if (root === 'learn') return learn();
+  if (root === 'quiz') return quiz();
+  if (root === 'cert') return certView();
+  if (root === 'print') return printView(fid);
   const flow = FLOWS[fid];
   if (root !== 'f' || !flow) return home();
   if (!vid) return flow.who ? who(fid, flow) : location.replace(link(fid, 'all', 1));
@@ -97,34 +103,39 @@ function shell(o, body, nav = '') {
 }
 
 // ---------- screens ----------
+// Most urgent first; the first three get big tiles.
+const ORDER = ['cpr', 'choking', 'bleeding', 'heart', 'stroke', 'allergy', 'seizure', 'fainting', 'burns', 'poisoning', 'head', 'bone', 'drowning', 'sugar', 'asthma', 'heat', 'cold', 'electric', 'nosebleed', 'bite', 'eye'];
+const VERSION = '4';
 function home() {
   document.title = 'First Minutes';
-  app.innerHTML = `<div class="home">
-    <header class="top"><div class="brand">${LOGO}<span>First Minutes</span></div><span class="tag">Prototype v3</span></header>
+  const ids = ORDER.filter(id => FLOWS[id]);
+  app.innerHTML = `<div class="home tabbed">
+    <header class="top"><div class="brand">${LOGO}<span>First Minutes</span></div></header>
     <a class="call911" href="tel:911">${I.phone}<span><b>Call 911</b><small>If a life is in danger, call first.</small></span></a>
     <label class="search">${I.search}<input id="q" type="search" placeholder="What’s happening?" autocomplete="off" enterkeyhint="search" aria-label="Search emergencies"></label>
     <div id="results" class="results" hidden></div>
     <div id="main">
-      <h2 class="label">Tap the emergency</h2>
-      <div class="tiles">${Object.entries(FLOWS).map(([id, f]) => tile(id, f)).join('')}</div>
-      <section class="coming"><h2 class="label">Coming in the full version</h2><div class="chips">${COMING.map(c => `<span>${c}</span>`).join('')}</div></section>
+      <h2 class="label">Most urgent</h2>
+      <div class="tiles">${ids.slice(0, 3).map(id => tile(id, FLOWS[id])).join('')}</div>
+      <h2 class="label">All emergencies</h2>
+      <div class="grid2">${ids.slice(3).map(id => miniTile(id, FLOWS[id])).join('')}</div>
       <section class="install"><h2>Save it before you need it</h2><p><b>iPhone:</b> tap Share, then Add to Home Screen. <b>Android:</b> tap the menu, then Add to Home screen. It opens even without internet.</p></section>
-      <p class="fine">First Minutes is a first aid guide written by a nurse, based on the 2025 American Heart Association guidelines, American Red Cross first aid and Stop the Bleed. It does not replace calling 911, a doctor, or a hands on CPR class.</p>
+      <p class="fine">First Minutes is a first aid guide written by a nurse, based on the 2025 American Heart Association guidelines, American Red Cross first aid and Stop the Bleed. It does not replace calling 911, a doctor, or a hands on CPR class. Version ${VERSION}.</p>
     </div>
-  </div>`;
+  </div>${tabbar('sos')}`;
   const q = app.querySelector('#q'), res = app.querySelector('#results'), main = app.querySelector('#main');
   q.addEventListener('input', () => {
     const words = q.value.toLowerCase().replace(/[^a-z\s']/g, ' ').split(/\s+/).filter(w => w.length > 1);
     if (!words.length) { res.hidden = true; main.hidden = false; return; }
-    const hit = Object.entries(FLOWS).filter(([, f]) => words.some(w => (f.title + ' ' + f.keys).toLowerCase().includes(w)));
-    const soon = COMING.filter(c => words.some(w => c.toLowerCase().includes(w)));
-    res.innerHTML = hit.map(([id, f]) => tile(id, f)).join('') +
-      soon.map(c => `<div class="soon"><b>${c}</b><small>Coming in the full version. If it’s serious, call 911.</small></div>`).join('') +
-      (hit.length || soon.length ? '' : `<div class="soon"><b>No match</b><small>Try another word, like “choking” or “bleeding”. If it’s serious, call 911.</small></div>`);
+    const scored = ids.map(id => { const f = FLOWS[id], hay = (f.title + ' ' + f.keys).toLowerCase(); return [id, words.filter(w => hay.includes(w)).length]; }).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
+    res.innerHTML = scored.map(([id]) => tile(id, FLOWS[id])).join('') ||
+      `<div class="soon"><b>No match</b><small>Try another word, like “choking”, “burn” or “bleeding”. If it’s serious, call 911.</small></div>`;
     res.hidden = false; main.hidden = true;
   });
+  window.scrollTo(0, 0);
 }
 const tile = (id, f) => `<a class="tile" href="#/f/${id}"><span class="tart">${thumb(f.icon)}</span><span class="tx"><b>${f.title}</b><small>${f.sub}</small></span>${I.chev}</a>`;
+const miniTile = (id, f) => `<a class="mtile" href="#/f/${id}"><span class="mart">${thumb(f.icon)}</span><b>${f.title}</b></a>`;
 
 function who(fid, flow) {
   const say = 'who-' + fid;

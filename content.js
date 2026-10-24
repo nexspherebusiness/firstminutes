@@ -69,7 +69,7 @@ const FLOWS = {
     },
     breathing: {
       steps: [
-        { art: 'recovery', t: 'Roll them on their side', d: 'Call 911. Roll them onto their side so they can’t choke on vomit, top knee bent, hand under the cheek. Stay and keep watching the breathing.', more: 'Think they hurt their neck or back in a fall or crash? Don’t move them unless they vomit or you must.', cta: { label: 'Breathing stopped: start CPR', go: '#/f/cpr' } },
+        { art: 'recovery', t: 'Roll them on their side', d: 'Call 911. Roll them onto their side, the left side if you can, so they can’t choke on vomit. Top knee bent, hand under the cheek. Stay and keep watching the breathing.', more: 'Pregnant? Always roll her onto her LEFT side. Think they hurt their neck or back in a fall or crash? Don’t move them unless they vomit or you must.', cta: { label: 'Breathing stopped: start CPR', go: '#/f/cpr' } },
       ],
     },
   },

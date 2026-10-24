@@ -33,7 +33,7 @@ function ctx() {
   return audio;
 }
 async function clip(key) {
-  if (!clips.has(key)) clips.set(key, fetch('audio/' + key + '.mp3').then(r => r.arrayBuffer()).then(b => ctx().decodeAudioData(b)));
+  if (!clips.has(key)) clips.set(key, fetch('voice/' + key + '.mp3').then(r => r.arrayBuffer()).then(b => ctx().decodeAudioData(b)));
   return clips.get(key);
 }
 async function speak(key) {
@@ -100,7 +100,7 @@ function shell(o, body, nav = '') {
 function home() {
   document.title = 'First Minutes';
   app.innerHTML = `<div class="home">
-    <header class="top"><div class="brand">${LOGO}<span>First Minutes</span></div><span class="tag">Prototype</span></header>
+    <header class="top"><div class="brand">${LOGO}<span>First Minutes</span></div><span class="tag">Prototype v3</span></header>
     <a class="call911" href="tel:911">${I.phone}<span><b>Call 911</b><small>If a life is in danger, call first.</small></span></a>
     <label class="search">${I.search}<input id="q" type="search" placeholder="What’s happening?" autocomplete="off" enterkeyhint="search" aria-label="Search emergencies"></label>
     <div id="results" class="results" hidden></div>
@@ -267,4 +267,10 @@ document.addEventListener('keydown', e => {
   } catch (e) { }
 }, true));
 route();
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { });
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  // When a new version takes over, reload once so the newest screens and voice are used.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+  navigator.serviceWorker.register('sw.js').catch(() => { });
+}

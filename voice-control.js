@@ -84,6 +84,8 @@ function stepCommand(alts) {
   const tap = sel => { const el = app.querySelector(sel); if (el) { el.click(); return true; } return false; };
   if (/\b(call|nine one one|911|ambulance)\b/.test(t)) { location.href = 'tel:911'; return true; }
   if (/\b(stop|pause)\b/.test(t) && metro) { stopMetro(); return true; }
+  if (/\b(stop|it stopped|stopped)\b/.test(t) && seizureCommand('stop')) return true;
+  if (/\b(start|begin|timer)\b/.test(t) && seizureCommand('start')) return true;
   if (/\b(start|begin|beat)\b/.test(t) && !metro && tap('.beat')) return true;
   if (/\b(repeat|again|what|huh|sorry)\b/.test(t)) { speak(lastSay); return true; }
   if (/\b(back|previous)\b/.test(t)) return tap('.nav .back');

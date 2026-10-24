@@ -258,6 +258,21 @@ button.cta { border: 0; width: 100%; cursor: pointer; font-family: inherit; }
 .pill.ok { background: #E3F5EC; color: #0B5E3C; } .pill.warn { background: #FFF4DB; color: #6B4A00; } .pill.bad { background: #FDE8E6; color: #8E1F16; }
 .warnlist b { font-size: 17px; } .warnlist p { margin: 0; font-size: 15.5px; } .warnlist small { color: var(--muted); }
 .prog2 small { color: var(--muted); font-size: 14px; }
+/* seizure timer, pinned in the header */
+.bar { flex-wrap: wrap; }
+.stimer { flex: 1 0 100%; display: flex; align-items: center; gap: 8px; margin-top: 4px; background: var(--soft); border-radius: 14px; padding: 6px 6px 6px 14px; min-height: 52px; }
+.stimer .sl { flex: 1; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; }
+.stimer .st { font-size: 26px; font-variant-numeric: tabular-nums; }
+.stimer i { width: 12px; height: 12px; border-radius: 50%; background: var(--red); animation: live 1.2s ease-in-out infinite; }
+.sbtn { border: 0; border-radius: 12px; min-height: 42px; padding: 0 16px; font: inherit; font-size: 17px; font-weight: 900; cursor: pointer; display: grid; place-items: center; }
+.sbtn.go { background: var(--green); color: #fff; }
+.sbtn.stop { background: var(--ink); color: var(--bg); }
+.sbtn.reset { background: var(--card); color: var(--ink); border: 2px solid var(--line); }
+.sbtn.call9 { background: var(--red); color: #fff; }
+.stimer.over { background: #FDE8E6; color: #8E1F16; }
+.stimer.over .sl { font-size: 14px; }
+.stimer.done { background: #E3F5EC; color: #0B5E3C; }
+.fine a { color: var(--muted); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .metro.hit .pulse { animation: none; } }
 </style>
 </head>

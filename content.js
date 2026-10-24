@@ -115,9 +115,9 @@ const FLOWS = {
     title: 'Seizure', sub: 'Shaking, jerking, staring', icon: 'seizureSafe', keys: 'seizure seizures convulsion convulsing shaking jerking fit epilepsy epileptic twitching',
     all: {
       steps: [
-        { art: 'seizureSafe', t: 'Keep them safe', d: 'Help them to the floor. Move hard and sharp things away. Put something soft under their head.' },
-        { art: 'seizureTime', t: 'Time it. Don’t hold them down.', d: 'Note the time it started. Don’t hold them down and don’t put anything in their mouth. No food, drink or pills.' },
-        { art: 'recovery', t: 'Roll them on their side', d: 'When the shaking stops, or if they vomit, roll them onto their side. Stay with them until they are fully awake.' },
+        { art: 'seizureSafe', t: 'Keep them safe', d: 'Tap Start on the timer at the top. Help them to the floor, move hard and sharp things away, and put something soft under their head.' },
+        { art: 'seizureTime', t: 'Time it. Don’t hold them down.', d: 'Tap Start on the timer at the top if you haven’t yet. Don’t hold them down and don’t put anything in their mouth. No food, drink or pills.' },
+        { art: 'recovery', t: 'Roll them on their side', d: 'When the shaking stops, tap Stop on the timer. Roll them onto their side, also if they vomit. Stay with them until they are fully awake.' },
         { art: 'call911If', t: 'Call 911 if...', d: 'It’s their first seizure, it lasts more than 5 minutes, another one follows, it happens in water, they’re hurt, pregnant or a baby under 6 months, they have trouble breathing, or they aren’t back to normal within 5 to 10 minutes.' },
       ],
     },

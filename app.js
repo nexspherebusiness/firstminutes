@@ -62,7 +62,7 @@ function stopSpeak() {
 // ---------- routing ----------
 const link = (...p) => '#/f/' + p.join('/');
 function route() {
-  stopMetro(); stopSpeak(); stopListening();
+  stopMetro(); stopSpeak(); stopListening(); clearInterval(seizTick);
   const [root, fid, vid, sid] = location.hash.replace(/^#\/?/, '').split('/');
   if (root === 'family') return family();
   if (root === 'kit') return kit();
@@ -133,6 +133,7 @@ function home() {
       <div class="grid2">${ids.slice(3).map(id => miniTile(id, FLOWS[id])).join('')}</div>
       <section class="install"><h2>Save it before you need it</h2><p><b>iPhone:</b> tap Share, then Add to Home Screen. <b>Android:</b> tap the menu, then Add to Home screen. It opens even without internet.</p></section>
       <p class="fine">First Minutes is a first aid guide written by a nurse, based on the 2025 American Heart Association guidelines, American Red Cross first aid and Stop the Bleed. It does not replace calling 911, a doctor, or a hands on CPR class. Version ${VERSION}.</p>
+      <p class="fine"><a href="../privacy/">Privacy</a> · <a href="../terms/">Terms</a> · <a href="../contact/">Contact</a></p>
     </div>
   </div>${tabbar('sos')}`;
   const q = app.querySelector('#q'), res = app.querySelector('#results'), main = app.querySelector('#main');
@@ -190,6 +191,7 @@ function step(fid, vid, flow, v, s, i) {
     </div>`,
     `<nav class="nav"><a class="back" href="${back}">Back</a>${next ? `<a class="next" href="${next}">${last ? 'Done' : 'Next'}${last ? '' : I.chev}</a>` : ''}</nav>`);
   if (s.metro) wireMetro(s.metro);
+  if (fid === 'seizure') seizureTimer();
   swipe(back, next && !last ? next : null);
   speak(say);
   if (!cough && !last) clip(`${fid}-${vid}-${i + 2}`).catch(() => { });
@@ -209,6 +211,48 @@ function swipe(back, next) {
 }
 
 // ---------- CPR beat: 110 pushes a minute ----------
+// ---------- seizure timer: stays at the top of every seizure screen until stopped ----------
+let seizTick = null;
+const mmss = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+function seizureTimer() {
+  const head = app.querySelector('.bar');
+  let box = head.querySelector('.stimer');
+  if (!box) { box = document.createElement('div'); box.className = 'stimer'; head.appendChild(box); }
+  // A timer left over from an earlier seizure (stopped 30 minutes ago, or running for 2 hours) starts fresh.
+  const old = store.get('seizure', {});
+  if ((old.stop && Date.now() - old.stop > 18e5) || (old.start && !old.stop && Date.now() - old.start > 72e5)) store.set('seizure', {});
+  const draw = () => {
+    const st = store.get('seizure', {});
+    if (!st.start) {
+      box.className = 'stimer';
+      box.innerHTML = `<span class="sl">\u23F1 Seizure timer</span><button type="button" class="sbtn go">Start</button>`;
+      box.querySelector('.go').onclick = () => { store.set('seizure', { start: Date.now() }); draw(); };
+      return;
+    }
+    const ms = (st.stop || Date.now()) - st.start, over = ms >= 300000;
+    if (st.stop) {
+      box.className = 'stimer done';
+      box.innerHTML = `<span class="sl">Lasted <b>${mmss(ms)}</b></span><button type="button" class="sbtn reset">Reset</button>`;
+      box.querySelector('.reset').onclick = () => { store.set('seizure', {}); draw(); };
+      return;
+    }
+    box.className = 'stimer run' + (over ? ' over' : '');
+    box.innerHTML = `<span class="sl"><i></i><b class="st">${mmss(ms)}</b>${over ? ' Over 5 minutes: call 911' : ''}</span>${over ? `<a class="sbtn call9" href="tel:911">911</a>` : ''}<button type="button" class="sbtn stop">Stop</button>`;
+    box.querySelector('.stop').onclick = () => { const x = store.get('seizure', {}); x.stop = Date.now(); store.set('seizure', x); draw(); };
+    if (over && !st.warned) { st.warned = true; store.set('seizure', st); speak('seizure-5min'); if (navigator.vibrate) navigator.vibrate([300, 150, 300]); }
+  };
+  draw();
+  clearInterval(seizTick);
+  seizTick = setInterval(() => { const st = store.get('seizure', {}); if (st.start && !st.stop) draw(); }, 1000);
+}
+const seizureCommand = cmd => {
+  if (!app.querySelector('.stimer')) return false;
+  const st = store.get('seizure', {});
+  if (cmd === 'start' && !st.start) { app.querySelector('.stimer .go').click(); return true; }
+  if (cmd === 'stop' && st.start && !st.stop) { app.querySelector('.stimer .stop').click(); return true; }
+  return false;
+};
+
 let metro = null;
 const breathsKey = mode => mode === 'adult' ? 'breaths' : 'kidBreaths';
 function metroHTML(mode) {

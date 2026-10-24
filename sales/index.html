@@ -225,6 +225,25 @@ sup a:hover { text-decoration: underline; }
 .opt li.n .ic { color: var(--red-d); }
 .advice { margin-top: 26px; background: var(--amber-soft); border-radius: 18px; padding: 18px 20px; font-size: 19px; font-weight: 650; }
 
+/* bonuses */
+.bonuses { background: var(--card); }
+.bgrid { display: grid; gap: 18px; margin-top: 34px; }
+.bcard { background: var(--bg); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; }
+.bvis { position: relative; height: 330px; overflow: hidden; display: flex; justify-content: center; align-items: flex-start; padding-top: 24px; background: var(--soft); }
+.bvis::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 70px; background: linear-gradient(rgba(236,232,224,0), var(--soft)); }
+.bvis .phone { width: 236px; }
+.bvis .paper { width: 84%; max-width: 380px; background: #fff; border-radius: 6px; box-shadow: 0 20px 40px -22px rgba(22,32,46,.55); transform: rotate(-2deg); }
+.bvis .paper img { width: 100%; height: auto; border-radius: 6px; }
+.bvis.cert { height: auto; padding: 28px 0 32px; align-items: center; }
+.bvis.cert::after { display: none; }
+.bvis.cert .paper { transform: rotate(1.5deg); }
+.bcard .txt { padding: 20px 20px 22px; }
+.bcard .lbl { font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #9A5B07; }
+.bcard h3 { font-size: 21px; font-weight: 850; margin-top: 4px; }
+.bcard p { font-size: 17px; color: var(--muted); margin-top: 6px; }
+.bcard .note { display: block; margin-top: 10px; font-size: 15px; background: var(--soft); border-radius: 10px; padding: 8px 10px; color: var(--ink); }
+.bcard p.sample { font-size: 14px; margin-top: 10px; font-style: italic; }
+
 /* offer */
 .offer { padding-top: 70px; }
 .deal { max-width: 760px; margin: 30px auto 0; background: #fff; border-radius: 30px; border: 3px solid var(--green-btn); overflow: hidden; box-shadow: 0 34px 60px -36px rgba(22,32,46,.5); }
@@ -304,6 +323,9 @@ footer .copy { margin-top: 26px; }
   .list21 { grid-template-columns: repeat(3, 1fr); }
   .whos { grid-template-columns: 1fr 1fr; }
   .cmp { grid-template-columns: 1fr 1fr; }
+  .bgrid { grid-template-columns: 1fr 1fr; }
+  .bvis { height: 380px; }
+  .bvis.cert { height: 380px; padding: 0 0 6px; }
   .rail { margin-left: -28px; margin-right: -28px; padding-left: 28px; padding-right: 28px; }
   .nurse .box { padding: 40px; }
 }
@@ -406,7 +428,7 @@ footer .copy { margin-top: 26px; }
       </ul>
     </div>
     <div class="phones" aria-label="Screens from the First Minutes app">
-      <figure class="phone back"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-home.webp" width="600" height="1298" alt="The First Minutes home screen with a red Call 911 button, a search box and big buttons for each emergency"></div></figure>
+      <figure class="phone back"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-home.webp" width="600" height="1298" alt="The First Minutes home screen: a red Call 911 button, a search box, big buttons for the most urgent emergencies and tabs for My Family, First Aid Kit and Learn"></div></figure>
       <figure class="phone front"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-backblows.webp" width="600" height="1298" fetchpriority="high" alt="A First Minutes step screen: Give 5 back blows, with a picture showing where to hit and short instructions"></div></figure>
       <div class="float f1"><span class="ib"><svg class="ic"><use href="#i-speaker"/></svg></span>A calm voice reads each step</div>
       <div class="float f2"><span class="ib"><svg class="ic"><use href="#i-phone"/></svg></span>Call 911 from every screen</div>
@@ -482,7 +504,7 @@ footer .copy { margin-top: 26px; }
     <div class="narrow">
       <span class="kicker">Meet First Minutes</span>
       <h2>Clear pictures and a calm voice, right on your phone, telling you exactly what to do.</h2>
-      <p class="lead">You tap what’s happening. First Minutes walks you through it one step at a time: one picture, a few short words, and a calm human voice reading each step out loud. So your eyes and hands can stay on the person who needs you.</p>
+      <p class="lead">You tap what’s happening. First Minutes walks you through it one step at a time: one picture, a few short words, and a calm, clear voice reading each step out loud. So your eyes and hands can stay on the person who needs you.</p>
     </div>
     <div class="rail" tabindex="0" aria-label="App screens">
       <figure>
@@ -499,7 +521,7 @@ footer .copy { margin-top: 26px; }
       </figure>
       <figure>
         <div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-cprpush.webp" width="600" height="1298" loading="lazy" alt="App screen for CPR: Push hard and fast, with the CPR beat counting pushes"></div></div>
-        <figcaption><b>It keeps your CPR rhythm</b><span>Push on every beat. It counts to 30 and tells you when to give breaths.</span></figcaption>
+        <figcaption><b>It keeps your CPR rhythm</b><span>Push on every beat. For a child or baby, it counts to 30 and tells you when to give 2 breaths.</span></figcaption>
       </figure>
     </div>
     <p class="swipe" id="swipe">Swipe to see more screens <svg class="ic" style="display:inline;vertical-align:-5px;width:20px;height:20px"><use href="#i-arrow"/></svg></p>
@@ -536,7 +558,7 @@ footer .copy { margin-top: 26px; }
       </div>
       <div class="feat">
         <div class="shot"><img src="img/crop-metro.webp" width="640" height="384" loading="lazy" alt="The CPR beat: a big blue button counting pushes, with a timer"></div>
-        <div class="txt"><span class="ib blue"><svg class="ic"><use href="#i-beat"/></svg></span><h3>A CPR beat to push to</h3><p>It ticks at 110 pushes a minute, counts to 30 and tells you when to give 2 breaths. Never trained? Just keep pushing to the beat.</p></div>
+        <div class="txt"><span class="ib blue"><svg class="ic"><use href="#i-beat"/></svg></span><h3>A CPR beat to push to</h3><p>It ticks at 110 pushes a minute. For an adult, just keep pushing (breaths only if you’re trained). For a child or baby, it counts to 30 and tells you when to give 2 breaths.</p></div>
       </div>
       <div class="feat">
         <div class="shot"><img src="img/crop-search.webp" width="640" height="350" loading="lazy" alt="Typing food stuck in the search box brings up Choking"></div>
@@ -688,7 +710,36 @@ footer .copy { margin-top: 26px; }
   </div>
 </section>
 
-<!-- 12. OFFER -->
+<!-- 12. BONUSES -->
+<section class="bonuses" id="bonuses">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">Included with First Minutes</span>
+      <h2>Plus 4 bonuses, built right into the app.</h2>
+      <p class="lead">Tap the tabs at the bottom of the app: My Family, First Aid Kit and Learn. Everything is ready to fill in, tick off and print.</p>
+    </div>
+    <div class="bgrid">
+      <article class="bcard">
+        <div class="bvis"><div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-kit.webp" width="600" height="1298" loading="lazy" alt="The First Aid Kit tab: a list of things to keep at home with tick boxes and a count of how many are ready"></div></div></div>
+        <div class="txt"><span class="lbl">Bonus 1</span><h3>Home Medicine Cabinet and First Aid Kit Checklist</h3><p>27 things to keep at home: the first aid kit, the medicine cabinet, and inhalers or epinephrine for anyone who needs them. Tick what you have, see what’s missing, and print the list.</p></div>
+      </article>
+      <article class="bcard">
+        <div class="bvis"><div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-family.webp" width="600" height="1298" loading="lazy" alt="The My Family tab: buttons to print a fridge card, a wallet card and a babysitter sheet, and fields for the home address and each person"></div></div></div>
+        <div class="txt"><span class="lbl">Bonus 2</span><h3>Family Emergency Card</h3><p>Fill in each person’s allergies, medicines and health conditions, plus your address, emergency contacts, doctor, and where the kit and medicines are. It’s saved only on your phone. Print it as a fridge card and a wallet card.</p><p class="sample">Shown with sample details.</p></div>
+      </article>
+      <article class="bcard">
+        <div class="bvis paperbox"><div class="paper"><img src="img/paper-sitter.webp" width="720" height="1310" loading="lazy" alt="The printed babysitter sheet: 911 and Poison Control numbers, what to say when you call 911, each person’s allergies and medicines, contacts, and quick steps for common emergencies"></div></div>
+        <div class="txt"><span class="lbl">Bonus 3</span><h3>Babysitter and Grandparent Sheet</h3><p>One printable page for whoever watches the kids: your family’s details, exactly what to say when calling 911, Poison Control’s number, and quick steps for choking (child and baby), not breathing, bleeding, burns and swallowed poison.</p><p class="sample">Shown with sample details.</p></div>
+      </article>
+      <article class="bcard">
+        <div class="bvis paperbox cert"><div class="paper"><img src="img/paper-cert.webp" width="720" height="586" loading="lazy" alt="A sample Certificate of Completion for the First Minutes Home Emergency Course, with a note that it is a self study course"></div></div>
+        <div class="txt"><span class="lbl">Bonus 4</span><h3>Certificate of Completion</h3><p>Walk through every emergency in Learn, then take a 12 question quiz. Get 10 right and print a certificate of completion with your name.</p><span class="note">Honest note: it is not a CPR card. It says right on it that it is for a self study course, and it won’t meet job or school requirements.</span><p class="sample">Shown with a sample name.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 13. OFFER -->
 <section class="offer" id="offer">
   <div class="wrap">
     <div class="narrow center" style="margin:0 auto">
@@ -704,19 +755,19 @@ footer .copy { margin-top: 26px; }
         </li>
         <li class="item">
           <span class="ib"><svg class="ic"><use href="#i-list"/></svg></span>
-          <div><span class="lbl b">Bonus 1</span><h3>Home Medicine Cabinet &amp; First Aid Kit Checklist</h3><p>What to keep at home for emergencies, and where to keep it so anyone can find it fast.</p></div>
+          <div><span class="lbl b">Bonus 1</span><h3>Home Medicine Cabinet and First Aid Kit Checklist</h3><p>27 things to keep at home and where to keep them. Tick what you have and print the list.</p></div>
         </li>
         <li class="item">
           <span class="ib"><svg class="ic"><use href="#i-card"/></svg></span>
-          <div><span class="lbl b">Bonus 2</span><h3>Family Emergency Card</h3><p>A printable card for allergies, medicines, health conditions and emergency contacts. One for the fridge, one for the wallet, so the answers are ready when paramedics ask.</p></div>
+          <div><span class="lbl b">Bonus 2</span><h3>Family Emergency Card</h3><p>Everyone’s allergies, medicines, health conditions and emergency contacts, saved only on your phone. Prints as a fridge card and a wallet card.</p></div>
         </li>
         <li class="item">
           <span class="ib"><svg class="ic"><use href="#i-fridge"/></svg></span>
-          <div><span class="lbl b">Bonus 3</span><h3>Babysitter &amp; Grandparent Fridge Cards</h3><p>Printable quick cards for whoever is watching the kids, with the key steps and the numbers to call.</p></div>
+          <div><span class="lbl b">Bonus 3</span><h3>Babysitter and Grandparent Sheet</h3><p>One printable page for whoever watches the kids: your family’s details, what to say to 911 and quick steps for the most common emergencies.</p></div>
         </li>
         <li class="item">
           <span class="ib"><svg class="ic"><use href="#i-award"/></svg></span>
-          <div><span class="lbl b">Bonus 4</span><h3>Certificate of Completion</h3><p>Take a short quiz in the app and get a certificate of completion with your name on it.</p><span class="note">To be clear: this is not a CPR card. It is not from the American Heart Association, the Red Cross or OSHA, and it won’t meet job or school requirements. It simply shows you took the time to learn.</span></div>
+          <div><span class="lbl b">Bonus 4</span><h3>Certificate of Completion</h3><p>Pass the 12 question quiz in the app (10 right answers) and print a certificate of completion with your name.</p><span class="note">To be clear: this is not a CPR card. It says right on it that it shows completion of a self study course. It is not from the American Heart Association, the Red Cross or OSHA, and it won’t meet job or school requirements.</span></div>
         </li>
       </ul>
       <div class="pricebox">
@@ -730,7 +781,7 @@ footer .copy { margin-top: 26px; }
   </div>
 </section>
 
-<!-- 13. GUARANTEE -->
+<!-- 14. GUARANTEE -->
 <section class="guar">
   <div class="wrap">
     <div class="gbox">
@@ -745,7 +796,7 @@ footer .copy { margin-top: 26px; }
   </div>
 </section>
 
-<!-- 14. FAQ -->
+<!-- 15. FAQ -->
 <section class="faq">
   <div class="wrap narrow">
     <span class="kicker">Questions</span>
@@ -757,7 +808,11 @@ footer .copy { margin-top: 26px; }
       </details>
       <details>
         <summary>Is the certificate an official CPR card?</summary>
-        <div class="a"><p>No. The Certificate of Completion only shows that you finished the short quiz in the app. It is not from the American Heart Association, the Red Cross or OSHA, and it won’t meet job or school requirements. If you need an official card for work, take an approved hands on class.</p></div>
+        <div class="a"><p>No. The Certificate of Completion shows that you passed the 12 question quiz in the app, and it says right on it that it is for a self study course. It is not from the American Heart Association, the Red Cross or OSHA, and it won’t meet job or school requirements. If you need an official card for work, take an approved hands on class.</p></div>
+      </details>
+      <details>
+        <summary>Where is my family’s information saved?</summary>
+        <div class="a"><p>Only on your phone. What you type in My Family stays on that phone and is not sent anywhere. Print it as a fridge card, a wallet card or a babysitter sheet whenever you like.</p></div>
       </details>
       <details>
         <summary>Does it work without internet?</summary>
@@ -795,7 +850,7 @@ footer .copy { margin-top: 26px; }
   </div>
 </section>
 
-<!-- 15. FINAL CTA -->
+<!-- 16. FINAL CTA -->
 <section class="final" id="final">
   <div class="wrap narrow">
     <h2>One day, someone may look at you and need you to know what to do.</h2>

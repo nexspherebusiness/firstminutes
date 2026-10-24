@@ -82,7 +82,7 @@ function kit() {
   const have = store.get('kit', {});
   const total = KIT.reduce((n, [, items]) => n + items.length, 0), done = Object.values(have).filter(Boolean).length;
   page('First Aid Kit', 'What to keep at home, so anyone can find it fast. Tick what you already have.', `
-    <div class="card prog2"><b>${done} of ${total} ready</b><div class="bar"><i style="width:${Math.round(done / total * 100)}%"></i></div></div>
+    <div class="card prog2"><b>${done} of ${total} ready</b><div class="kbar"><i style="width:${Math.round(done / total * 100)}%"></i></div></div>
     ${KIT.map(([group, items]) => `<h2 class="label">${group}</h2><div class="card checks">${items.map(([id, label]) => `<label class="check"><input type="checkbox" data-id="${id}" ${have[id] ? 'checked' : ''}><span>${label}</span></label>`).join('')}</div>`).join('')}
     <h2 class="label">Keep it safe and ready</h2>
     <div class="card tips"><p>Keep the kit in one place everyone knows, up high and away from children. Keep medicines in their original boxes and follow the label or ask your pharmacist for doses.</p><p>Twice a year, check expiration dates and replace anything used. Keep a small kit in the car too.</p></div>

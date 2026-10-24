@@ -105,7 +105,7 @@ function shell(o, body, nav = '') {
 // ---------- screens ----------
 // Most urgent first; the first three get big tiles.
 const ORDER = ['cpr', 'choking', 'bleeding', 'heart', 'stroke', 'allergy', 'seizure', 'fainting', 'burns', 'poisoning', 'head', 'bone', 'drowning', 'sugar', 'asthma', 'heat', 'cold', 'electric', 'nosebleed', 'bite', 'eye'];
-const VERSION = '4';
+const VERSION = '5';
 function home() {
   document.title = 'First Minutes';
   const ids = ORDER.filter(id => FLOWS[id]);

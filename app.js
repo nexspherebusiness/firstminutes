@@ -20,18 +20,38 @@ const LOGO = '<svg viewBox="0 0 40 40" class="logo"><rect width="40" height="40"
 const CROP = { chokeSign: '50 12 150 112', cprPush: '34 66 290 216', bleedPress: '60 40 240 179' };
 const thumb = id => art(id).replace('viewBox="0 0 360 260"', `viewBox="${CROP[id] || '0 0 360 260'}" preserveAspectRatio="xMidYMid slice"`);
 
-// ---------- voice ----------
-let voiceOn = store.get('voice', true);
-function speak(text) {
-  if (!voiceOn || !('speechSynthesis' in window)) return;
-  try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text.replace(/“|”/g, ''));
-    u.lang = 'en-US'; u.rate = 0.95;
-    speechSynthesis.speak(u);
-  } catch (e) { }
+// ---------- voice: a recorded clip for every screen (audio/<key>.mp3) ----------
+let voiceOn = store.get('voice', true), audio = null, voiceSrc = null, playToken = 0;
+const clips = new Map();
+function ctx() {
+  if (!audio) {
+    audio = new (window.AudioContext || window.webkitAudioContext)();
+    // Keeps sound on when an iPhone is switched to silent.
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { }
+  }
+  if (audio.state === 'suspended') audio.resume().catch(() => { });
+  return audio;
 }
-function stopSpeak() { try { speechSynthesis.cancel(); } catch (e) { } }
+async function clip(key) {
+  if (!clips.has(key)) clips.set(key, fetch('audio/' + key + '.mp3').then(r => r.arrayBuffer()).then(b => ctx().decodeAudioData(b)));
+  return clips.get(key);
+}
+async function speak(key) {
+  stopSpeak();
+  if (!voiceOn || !key) return;
+  const token = playToken;
+  try {
+    const buf = await clip(key);
+    if (token !== playToken || !voiceOn) return;
+    const s = ctx().createBufferSource();
+    s.buffer = buf; s.connect(audio.destination); s.start();
+    voiceSrc = s;
+  } catch (e) { clips.delete(key); }
+}
+function stopSpeak() {
+  playToken++;
+  if (voiceSrc) { try { voiceSrc.stop(); } catch (e) { } voiceSrc = null; }
+}
 
 // ---------- routing ----------
 const link = (...p) => '#/f/' + p.join('/');
@@ -72,7 +92,7 @@ function shell(o, body, nav = '') {
     voiceOn = !voiceOn; store.set('voice', voiceOn);
     e.currentTarget.setAttribute('aria-pressed', voiceOn);
     e.currentTarget.innerHTML = voiceOn ? I.spk : I.mute;
-    voiceOn ? speak(o.say || '') : stopSpeak();
+    voiceOn ? speak(o.say) : stopSpeak();
   });
 }
 
@@ -107,7 +127,7 @@ function home() {
 const tile = (id, f) => `<a class="tile" href="#/f/${id}"><span class="tart">${thumb(f.icon)}</span><span class="tx"><b>${f.title}</b><small>${f.sub}</small></span>${I.chev}</a>`;
 
 function who(fid, flow) {
-  const say = 'Who needs help? ' + flow.who.map(w => w.label).join(', or ') + '?';
+  const say = 'who-' + fid;
   shell({ title: flow.title, sub: 'Who needs help?', say }, `<div class="pad">
     <h1 class="q">Who needs help?</h1>
     <div class="who">${flow.who.map(w => `<a class="whob" href="${link(fid, w.id)}"><span class="wart">${art(w.art)}</span><span class="tx"><b>${w.label}</b><small>${w.sub}</small></span>${I.chev}</a>`).join('')}</div>
@@ -116,21 +136,22 @@ function who(fid, flow) {
 }
 
 function check(fid, vid, flow, v) {
-  shell({ title: flow.title, sub: whoLabel(flow, vid), say: v.check.q }, `<div class="pad">
+  const say = `check-${fid}-${vid}`;
+  shell({ title: flow.title, sub: whoLabel(flow, vid), say }, `<div class="pad">
     <h1 class="q">${v.check.q}</h1>
     <div class="answers">
       <a class="ans no" href="${link(fid, vid, 1)}"><b>${v.check.no}</b><small>Start the steps now</small></a>
       <a class="ans yes" href="${link(fid, vid, 'cough')}"><b>${v.check.yes}</b><small>Let them cough</small></a>
     </div>
   </div>`);
-  speak(v.check.q);
+  speak(say);
 }
 
 function step(fid, vid, flow, v, s, i) {
   const n = v.steps.length, cough = i < 0, last = !cough && i === n - 1;
   const back = cough ? link(fid, vid) : i > 0 ? link(fid, vid, i) : v.check ? link(fid, vid) : vid === 'breathing' ? link('cpr') : flow.who ? link(fid) : '#/';
   const next = cough ? null : last ? '#/' : link(fid, vid, i + 2);
-  const say = s.t + '. ' + s.d;
+  const say = cough ? `cough-${fid}-${vid}` : `${fid}-${vid}-${i + 1}`;
   shell({ title: flow.title, sub: whoLabel(flow, vid), progress: cough ? null : Math.round((i + 1) / n * 100), say }, `
     <div class="art">${art(s.art)}</div>
     <div class="txt">
@@ -146,6 +167,7 @@ function step(fid, vid, flow, v, s, i) {
   if (s.metro) wireMetro(s.metro);
   swipe(back, next && !last ? next : null);
   speak(say);
+  if (!cough && !last) clip(`${fid}-${vid}-${i + 2}`).catch(() => { });
 }
 
 function swipe(back, next) {
@@ -162,21 +184,23 @@ function swipe(back, next) {
 }
 
 // ---------- CPR beat: 110 pushes a minute ----------
-let metro = null, audio = null;
+let metro = null;
+const breathsKey = mode => mode === 'adult' ? 'breaths' : 'kidBreaths';
 function metroHTML(mode) {
-  const breaths = mode !== 'adult' || store.get('breaths', false);
+  const word = mode === 'baby' ? 'puffs' : 'breaths';
+  const breaths = store.get(breathsKey(mode), mode !== 'adult');
   return `<div class="metro">
     <button class="beat" type="button" aria-label="Start the CPR beat"><span class="pulse"></span><span class="num">Start</span><span class="hint">the beat</span></button>
     <div class="mside">
       <p class="mtime">0:00</p>
       <p class="mstate">Tap and push on every beat.</p>
-      ${mode === 'adult' ? `<label class="tog"><input type="checkbox" ${breaths ? 'checked' : ''}><span>I’m trained: 2 breaths every 30 pushes</span></label>` : `<p class="mstate">30 pushes, then 2 ${mode === 'baby' ? 'puffs' : 'breaths'}.</p>`}
+      <label class="tog"><input type="checkbox" ${breaths ? 'checked' : ''}><span>${mode === 'adult' ? 'I’m trained: 2 breaths every 30 pushes' : `I know how: 2 ${word} every 30 pushes`}</span></label>
     </div>
   </div>`;
 }
 function click(accent) {
   try {
-    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    ctx();
     const o = audio.createOscillator(), g = audio.createGain(), t = audio.currentTime;
     o.frequency.value = accent ? 1320 : 880;
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
@@ -187,11 +211,10 @@ function wireMetro(mode) {
   const box = app.querySelector('.metro'), btn = box.querySelector('.beat'), num = box.querySelector('.num'), hint = box.querySelector('.hint');
   const time = box.querySelector('.mtime'), state = box.querySelector('.mstate'), tog = box.querySelector('.tog input');
   const word = mode === 'baby' ? 'puffs' : 'breaths';
-  let breaths = mode !== 'adult' || (tog && tog.checked);
-  if (tog) tog.addEventListener('change', () => { breaths = tog.checked; store.set('breaths', breaths); });
+  let breaths = tog.checked;
+  tog.addEventListener('change', () => { breaths = tog.checked; store.set(breathsKey(mode), breaths); });
   btn.addEventListener('click', () => {
     if (metro) return stopMetro();
-    if (audio && audio.state === 'suspended') audio.resume();
     let count = 0, pause = 0, lastSwitch = 0;
     const t0 = Date.now();
     metro = { box, lock: null };
@@ -209,10 +232,10 @@ function wireMetro(mode) {
       box.classList.remove('hit'); void box.offsetWidth; box.classList.add('hit');
       if (breaths && c === 30) {
         pause = 9; box.classList.add('rest'); num.textContent = '2'; hint.textContent = word;
-        state.textContent = `Give 2 ${word} now.`; speak(`Give 2 ${word}`);
+        state.textContent = `Give 2 ${word} now.`; speak('metro-' + word);
       } else if (secs - lastSwitch >= 120) {
         lastSwitch = secs;
-        state.textContent = '2 minutes. Switch if someone can take over.';
+        state.textContent = '2 minutes. Switch if someone can take over.'; speak('metro-switch');
       }
     };
     tick();
@@ -236,10 +259,12 @@ document.addEventListener('keydown', e => {
   const a = app.querySelector(e.key === 'ArrowRight' ? '.nav .next' : e.key === 'ArrowLeft' ? '.nav .back' : null);
   if (a) location.hash = a.getAttribute('href');
 });
-// Some phones only allow speech that starts from a tap, so the first tap unlocks it.
-document.addEventListener('click', function unlock() {
-  try { if (voiceOn && 'speechSynthesis' in window) speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch (e) { }
-  document.removeEventListener('click', unlock, true);
-}, true);
+// Phones only allow sound that starts from a tap, so every tap makes sure audio is awake.
+['touchend', 'click'].forEach(ev => document.addEventListener(ev, () => {
+  try {
+    const c = ctx(), b = c.createBuffer(1, 1, 22050), s = c.createBufferSource();
+    s.buffer = b; s.connect(c.destination); s.start(0);
+  } catch (e) { }
+}, true));
 route();
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { });

@@ -12,7 +12,8 @@ const ICO = {
 
 function tabbar(active) {
   const t = (id, href, label, icon) => `<a class="tab${active === id ? ' on' : ''}" href="${href}">${icon}<span>${label}</span></a>`;
-  return `<nav class="tabbar">${t('sos', '#/', 'Emergency', ICO.bolt)}${t('family', '#/family', 'My Family', ICO.family)}${t('kit', '#/kit', 'First Aid Kit', ICO.kit)}${t('learn', '#/learn', 'Learn', ICO.learn)}</nav>`;
+  const kitIcon = ICO.kit + (kitAlerts().length ? '<em class="dot" aria-label="Something in your kit is expiring"></em>' : '');
+  return `<nav class="tabbar">${t('sos', '#/', 'Emergency', ICO.bolt)}${t('family', '#/family', 'My Family', ICO.family)}${t('kit', '#/kit', 'First Aid Kit', kitIcon)}${t('learn', '#/learn', 'Learn', ICO.learn)}</nav>`;
 }
 function page(title, sub, body, active) {
   document.title = title + ' · First Minutes';
@@ -78,16 +79,39 @@ const KIT = [
   ['Personal and prescribed', [
     ['epi', 'Epinephrine auto injectors for anyone with severe allergies (2 of them)'], ['inhaler', 'Rescue inhalers and spacers for anyone with asthma'], ['list', 'A list of everyone’s medicines and allergies (see My Family)']]],
 ];
+// Expiry dates: an item that is expired or expires within 60 days shows a warning here, on the home screen and on the tab.
+function expStatus(ym) {
+  if (!ym) return null;
+  const [y, m] = ym.split('-').map(Number), end = new Date(y, m, 0, 23, 59), days = (end - new Date()) / 864e5;
+  return days < 0 ? 'expired' : days <= 60 ? 'soon' : 'ok';
+}
+const monthName = ym => { const [y, m] = ym.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); };
+function kitAlerts() {
+  const have = store.get('kit', {}), exp = store.get('kitExp', {}), out = [];
+  KIT.forEach(([, items]) => items.forEach(([id, label]) => { const st = have[id] && expStatus(exp[id]); if (st === 'expired' || st === 'soon') out.push({ id, label, st, ym: exp[id] }); }));
+  return out.sort((a, b) => a.ym.localeCompare(b.ym));
+}
+function kitAlertBar() {
+  const a = kitAlerts();
+  if (!a.length) return '';
+  const expired = a.filter(x => x.st === 'expired').length, soon = a.length - expired;
+  const head = [expired ? `${expired} expired` : '', soon ? `${soon} expiring soon` : ''].filter(Boolean).join(', ');
+  const short = l => l.split(' (')[0].split(',')[0].split(' for ')[0];
+  return `<a class="alertbar${expired ? ' bad' : ''}" href="#/kit">${ICO.kit}<span><b>First aid kit: ${head}</b><small>${a.slice(0, 2).map(x => short(x.label)).join(', ')}${a.length > 2 ? ' and more' : ''}</small></span>${I.chev}</a>`;
+}
 function kit() {
-  const have = store.get('kit', {});
+  const have = store.get('kit', {}), exp = store.get('kitExp', {}), alerts = kitAlerts();
   const total = KIT.reduce((n, [, items]) => n + items.length, 0), done = Object.values(have).filter(Boolean).length;
+  const pill = id => { const st = expStatus(exp[id]); return st === 'expired' ? '<b class="pill bad">Expired</b>' : st === 'soon' ? '<b class="pill warn">Expires soon</b>' : st === 'ok' ? '<b class="pill ok">OK</b>' : ''; };
   page('First Aid Kit', 'What to keep at home, so anyone can find it fast. Tick what you already have.', `
-    <div class="card prog2"><b>${done} of ${total} ready</b><div class="kbar"><i style="width:${Math.round(done / total * 100)}%"></i></div></div>
-    ${KIT.map(([group, items]) => `<h2 class="label">${group}</h2><div class="card checks">${items.map(([id, label]) => `<label class="check"><input type="checkbox" data-id="${id}" ${have[id] ? 'checked' : ''}><span>${label}</span></label>`).join('')}</div>`).join('')}
+    <div class="card prog2"><b>${done} of ${total} ready</b><div class="kbar"><i style="width:${Math.round(done / total * 100)}%"></i></div><small>Tick an item, then add the date printed on it. We’ll warn you here 2 months before it expires.</small></div>
+    ${alerts.length ? `<div class="card warnlist"><b>Replace soon</b>${alerts.map(a => `<p><span class="pill ${a.st === 'expired' ? 'bad' : 'warn'}">${a.st === 'expired' ? 'Expired' : 'Soon'}</span> ${a.label.split(' (')[0]} <small>${monthName(a.ym)}</small></p>`).join('')}</div>` : ''}
+    ${KIT.map(([group, items]) => `<h2 class="label">${group}</h2><div class="card checks">${items.map(([id, label]) => `<div class="kitem"><label class="check"><input type="checkbox" data-id="${id}" ${have[id] ? 'checked' : ''}><span>${label}</span></label>${have[id] ? `<div class="exp"><span>Expires</span><input type="month" data-exp="${id}" value="${exp[id] || ''}" aria-label="Expiration month for ${esc(label)}">${pill(id)}</div>` : ''}</div>`).join('')}</div>`).join('')}
     <h2 class="label">Keep it safe and ready</h2>
     <div class="card tips"><p>Keep the kit in one place everyone knows, up high and away from children. Keep medicines in their original boxes and follow the label or ask your pharmacist for doses.</p><p>Twice a year, check expiration dates and replace anything used. Keep a small kit in the car too.</p></div>
     <a class="cta soft" href="#/print/kit">${ICO.print}Print this checklist</a>`, 'kit');
-  app.querySelectorAll('[data-id]').forEach(c => c.addEventListener('change', () => { const h = store.get('kit', {}); h[c.dataset.id] = c.checked; store.set('kit', h); kit(); }));
+  app.querySelectorAll('[data-id]').forEach(c => c.addEventListener('change', () => { const h = store.get('kit', {}); h[c.dataset.id] = c.checked; store.set('kit', h); const y = window.scrollY; kit(); window.scrollTo(0, y); }));
+  app.querySelectorAll('[data-exp]').forEach(c => c.addEventListener('change', () => { const e = store.get('kitExp', {}); if (c.value) e[c.dataset.exp] = c.value; else delete e[c.dataset.exp]; store.set('kitExp', e); const y = window.scrollY; kit(); window.scrollTo(0, y); }));
 }
 
 // ---------- Learn: quiz and Certificate of Completion ----------
@@ -162,7 +186,8 @@ function printView(kind) {
   const f = fam();
   if (kind === 'kit') {
     const have = store.get('kit', {});
-    return printShell('First aid kit checklist', `<div class="sheet"><h1>${LOGO} Home First Aid Kit and Medicine Cabinet</h1>${KIT.map(([g, items]) => `<h2>${g}</h2><ul class="boxes">${items.map(([id, l]) => `<li class="${have[id] ? 'ok' : ''}">${l}</li>`).join('')}</ul>`).join('')}<p class="small">Check dates twice a year. Keep medicines up high, in their original boxes. Follow the label or ask your pharmacist for doses.</p></div>`);
+    const exp = store.get('kitExp', {});
+    return printShell('First aid kit checklist', `<div class="sheet"><h1>${LOGO} Home First Aid Kit and Medicine Cabinet</h1>${KIT.map(([g, items]) => `<h2>${g}</h2><ul class="boxes">${items.map(([id, l]) => `<li class="${have[id] ? 'ok' : ''}">${l}${exp[id] ? ` <small>(expires ${monthName(exp[id])})</small>` : ''}</li>`).join('')}</ul>`).join('')}<p class="small">Check dates twice a year. Keep medicines up high, in their original boxes. Follow the label or ask your pharmacist for doses.</p></div>`);
   }
   if (kind === 'wallet') {
     return printShell('Wallet card', `<div class="wallet"><div class="wside"><h3>${LOGO} In case of emergency</h3><p><b>Address:</b> ${esc(f.address)}</p><ul class="plain">${contactsList(f)}</ul><p><b>Doctor:</b> ${esc(f.doctor)} ${esc(f.doctorPhone)}</p></div><div class="wside"><h3>Allergies and medicines</h3><ul class="plain">${f.members.filter(m => m.name).map(m => `<li><b>${esc(m.name)}:</b> ${esc(m.allergies) || 'no known allergies'}${m.meds ? `; ${esc(m.meds)}` : ''}${m.conditions ? `; ${esc(m.conditions)}` : ''}</li>`).join('') || '<li>Add your family in My Family.</li>'}</ul><p><b>Poison Control:</b> 1 800 222 1222</p></div></div><p class="fine noprint">Cut along the outside, fold in the middle.</p>`);

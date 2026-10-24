@@ -4,6 +4,7 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem('fm.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('fm.' + k, JSON.stringify(v)); } catch (e) { } },
 };
+handsFree = store.get('handsFree', false);
 
 const I = {
   home: '<svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h13V9.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -36,17 +37,22 @@ async function clip(key) {
   if (!clips.has(key)) clips.set(key, fetch('voice/' + key + '.mp3').then(r => r.arrayBuffer()).then(b => ctx().decodeAudioData(b)));
   return clips.get(key);
 }
+const voicePlaying = () => !!voiceSrc;
 async function speak(key) {
   stopSpeak();
-  if (!voiceOn || !key) return;
+  if (key) lastSay = key;
+  if (!voiceOn || !key) { setTimeout(stepListen, 300); return; }
   const token = playToken;
   try {
     const buf = await clip(key);
     if (token !== playToken || !voiceOn) return;
     const s = ctx().createBufferSource();
-    s.buffer = buf; s.connect(audio.destination); s.start();
+    s.buffer = buf; s.connect(audio.destination);
+    stopListening();
+    s.onended = () => { if (voiceSrc === s) voiceSrc = null; if (!voiceSrc) setTimeout(stepListen, 250); };
+    s.start();
     voiceSrc = s;
-  } catch (e) { clips.delete(key); }
+  } catch (e) { clips.delete(key); setTimeout(stepListen, 300); }
 }
 function stopSpeak() {
   playToken++;
@@ -56,7 +62,7 @@ function stopSpeak() {
 // ---------- routing ----------
 const link = (...p) => '#/f/' + p.join('/');
 function route() {
-  stopMetro(); stopSpeak();
+  stopMetro(); stopSpeak(); stopListening();
   const [root, fid, vid, sid] = location.hash.replace(/^#\/?/, '').split('/');
   if (root === 'family') return family();
   if (root === 'kit') return kit();
@@ -87,13 +93,18 @@ function shell(o, body, nav = '') {
     <header class="bar">
       <a class="ib" href="#/" aria-label="Home">${I.home}</a>
       <div class="crumb"><b>${o.title}</b>${o.sub ? `<span>${o.sub}</span>` : ''}</div>
+      ${canListen ? `<button class="ib mic hf${handsFree ? ' onhf' : ''}" type="button" aria-pressed="${handsFree}" aria-label="Hands free: control with your voice">${MIC}</button>` : ''}
       <button class="ib voice" type="button" aria-pressed="${voiceOn}" aria-label="Read the steps aloud">${voiceOn ? I.spk : I.mute}</button>
       <a class="call" href="tel:911" aria-label="Call 911">${I.phone}<span>911</span></a>
     </header>
     ${o.progress != null ? `<div class="prog" aria-hidden="true"><i style="width:${o.progress}%"></i></div>` : ''}
     <main class="body">${body}</main>${nav}
+    <div class="listening" hidden><i></i>Listening. Say <b>next</b>, <b>back</b>, <b>repeat</b>${body.includes('class="metro"') ? ', <b>start</b>, <b>stop</b>' : ''}</div>
   </div>`;
   window.scrollTo(0, 0);
+  const hfb = app.querySelector('.mic.hf');
+  if (hfb) hfb.addEventListener('click', toggleHandsFree);
+  if (hfb && !handsFree && !store.get('hfHint', false)) { store.set('hfHint', true); setTimeout(() => toast('Hands busy? Tap the mic and say “next”.'), 1200); }
   app.querySelector('.voice').addEventListener('click', e => {
     voiceOn = !voiceOn; store.set('voice', voiceOn);
     e.currentTarget.setAttribute('aria-pressed', voiceOn);
@@ -105,14 +116,15 @@ function shell(o, body, nav = '') {
 // ---------- screens ----------
 // Most urgent first; the first three get big tiles.
 const ORDER = ['cpr', 'choking', 'bleeding', 'heart', 'stroke', 'allergy', 'seizure', 'fainting', 'burns', 'poisoning', 'head', 'bone', 'drowning', 'sugar', 'asthma', 'heat', 'cold', 'electric', 'nosebleed', 'bite', 'eye'];
-const VERSION = '5';
+const VERSION = '6';
 function home() {
   document.title = 'First Minutes';
   const ids = ORDER.filter(id => FLOWS[id]);
   app.innerHTML = `<div class="home tabbed">
     <header class="top"><div class="brand">${LOGO}<span>First Minutes</span></div></header>
     <a class="call911" href="tel:911">${I.phone}<span><b>Call 911</b><small>If a life is in danger, call first.</small></span></a>
-    <label class="search">${I.search}<input id="q" type="search" placeholder="What’s happening?" autocomplete="off" enterkeyhint="search" aria-label="Search emergencies"></label>
+    <label class="search">${I.search}<input id="q" type="search" placeholder="${canListen ? 'Type or tap the mic' : 'What’s happening?'}" autocomplete="off" enterkeyhint="search" aria-label="Search emergencies">${canListen ? `<button class="mic srch" type="button" aria-label="Say what is happening">${MIC}</button>` : ''}</label>
+    ${kitAlertBar()}
     <div id="results" class="results" hidden></div>
     <div id="main">
       <h2 class="label">Most urgent</h2>
@@ -124,6 +136,8 @@ function home() {
     </div>
   </div>${tabbar('sos')}`;
   const q = app.querySelector('#q'), res = app.querySelector('#results'), main = app.querySelector('#main');
+  const ms = app.querySelector('.mic.srch');
+  if (ms) ms.addEventListener('click', e => { e.preventDefault(); voiceSearch(); });
   q.addEventListener('input', () => {
     const words = q.value.toLowerCase().replace(/[^a-z\s']/g, ' ').split(/\s+/).filter(w => w.length > 1);
     if (!words.length) { res.hidden = true; main.hidden = false; return; }

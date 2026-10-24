@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>First Minutes: know what to do until the ambulance arrives</title>
+<meta name="description" content="A simple phone app, written by a nurse, that walks you through 21 emergencies step by step, with clear pictures and a calm voice. One time payment of $9.99.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F6F4EF">
+
+<!-- Open Graph: once the page is hosted, change og:url and og:image to full https:// addresses. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="First Minutes">
+<meta property="og:title" content="If someone you love started choking right now, would you know what to do?">
+<meta property="og:description" content="First Minutes walks you through 21 emergencies step by step, with clear pictures and a calm voice. Written by a nurse. $9.99, one time.">
+<meta property="og:image" content="img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%2314935F'/%3E%3Cpath d='M206 106h100v100h100v100H306v100H206V306H106V206h100z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="img/screen-backblows.webp" type="image/webp">
+
+<!-- PIXEL / UTMIFY SCRIPTS GO HERE -->
+
+<style>
+:root {
+  --bg: #F6F4EF; --card: #FFFFFF; --ink: #16202E; --muted: #4F5969; --line: #E2DDD3; --soft: #ECE8E0; --art: #F1EEE7;
+  --green: #14935F; --green-d: #0E7A4E; --green-btn: #11855A; --green-soft: #E3F2EA;
+  --red: #D92D20; --red-d: #B42318; --red-soft: #FCEBE9;
+  --blue: #2F6FED; --amber: #F2A541; --amber-soft: #FDF0DC;
+  --r: 22px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 19px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; line-height: 1.12; letter-spacing: -0.015em; text-wrap: balance; }
+p { margin: 0; }
+.wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 18px; }
+.narrow { max-width: 760px; }
+section { padding: 64px 0; scroll-margin-top: 12px; }
+.kicker { display: inline-block; font-size: 14px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; color: var(--green-d); margin-bottom: 12px; }
+.kicker.red { color: var(--red-d); }
+h2 { font-size: clamp(29px, 4.4vw, 44px); font-weight: 850; }
+.lead { font-size: 21px; color: var(--ink); margin-top: 16px; }
+.muted { color: var(--muted); }
+.center { text-align: center; }
+.center .lead { margin-left: auto; margin-right: auto; }
+.ic { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+sup a { color: var(--muted); text-decoration: none; font-weight: 700; font-size: 13px; padding: 0 1px; }
+sup a:hover { text-decoration: underline; }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; padding: 14px 28px; border-radius: 18px; background: var(--green-btn); color: #fff; font-weight: 850; font-size: 21px; line-height: 1.2; text-decoration: none; text-align: center; box-shadow: 0 12px 26px -14px rgba(14, 122, 78, .85), inset 0 -3px 0 rgba(0,0,0,.14); transition: transform .12s, background .12s; }
+.btn:hover { background: var(--green-d); }
+.btn:active { transform: translateY(1px); }
+.btn > span { text-wrap: balance; }
+.btn .ic { width: 22px; height: 22px; stroke-width: 2.6; }
+.btn.block { display: flex; width: 100%; }
+.btn.big { min-height: 72px; font-size: 23px; }
+.under { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 14px; font-size: 15.5px; color: var(--muted); font-weight: 600; }
+.under span { display: inline-flex; align-items: center; gap: 6px; }
+.under .ic { width: 18px; height: 18px; color: var(--green-d); stroke-width: 2.6; }
+
+/* header */
+.top { padding: 14px 0; }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 850; font-size: 21px; letter-spacing: -0.01em; text-decoration: none; }
+.brand svg { width: 36px; height: 36px; }
+.top .mini { font-size: 16px; font-weight: 800; text-decoration: none; padding: 10px 16px; border-radius: 12px; border: 2px solid var(--green-btn); color: var(--green-d); white-space: nowrap; }
+.top .mini:hover { background: var(--green-soft); }
+
+/* hero */
+.hero { padding: 18px 0 56px; }
+.hero .wrap { display: grid; gap: 36px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 8px; background: var(--amber-soft); color: #7A4A06; border-radius: 99px; padding: 7px 14px; font-size: 15px; font-weight: 750; margin-bottom: 18px; }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex: none; }
+.hero h1 { font-size: clamp(35px, 6.2vw, 60px); font-weight: 850; line-height: 1.06; letter-spacing: -0.025em; }
+.hero h1 em { font-style: normal; background: linear-gradient(transparent 62%, rgba(242,165,65,.55) 62%); padding: 0 2px; }
+.hero .sub { font-size: 21px; margin-top: 18px; max-width: 34em; }
+.hero .cta { margin-top: 26px; max-width: 460px; }
+.hero .under { justify-content: flex-start; }
+.ticks { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 8px; font-size: 17px; font-weight: 650; }
+.ticks li { display: flex; gap: 10px; align-items: flex-start; }
+.ticks .ic { color: var(--green-d); width: 22px; height: 22px; margin-top: 2px; stroke-width: 2.6; }
+
+.phones { position: relative; width: 100%; max-width: 440px; margin: 0 auto; height: 530px; }
+.phone { margin: 0; width: 250px; flex: none; background: #0E141D; border-radius: 42px; padding: 9px; box-shadow: 0 30px 60px -28px rgba(22,32,46,.55), 0 2px 0 rgba(255,255,255,.08) inset; }
+.phone .scr { border-radius: 34px; overflow: hidden; background: var(--bg); }
+.phone .sb { height: 24px; display: flex; justify-content: center; align-items: center; background: var(--bg); }
+.phone .sb span { width: 74px; height: 20px; border-radius: 12px; background: #0E141D; }
+.phone img { width: 100%; height: auto; aspect-ratio: 600 / 1298; }
+.phones .phone { position: absolute; }
+.phones .back { left: 3%; top: 48px; width: 196px; transform: rotate(-6deg); }
+.phones .front { right: 3%; top: 0; width: 236px; z-index: 2; }
+.float { position: absolute; z-index: 3; display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 16px; padding: 10px 14px; font-size: 15px; font-weight: 800; line-height: 1.2; box-shadow: 0 14px 30px -16px rgba(22,32,46,.45); max-width: 210px; }
+.float .ib { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; flex: none; }
+.float .ib .ic { width: 20px; height: 20px; }
+.float { display: none; }
+.float.f1 { left: 0; bottom: 64px; }
+.float.f1 .ib { background: #E8EFFF; color: var(--blue); }
+.float.f2 { left: 0; top: 4px; }
+.float.f2 .ib { background: var(--red); color: #fff; }
+.float.f2 .ib .ic { fill: currentColor; stroke: none; }
+
+/* trust strip */
+.strip { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 20px 0; }
+.strip ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+.strip li { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; line-height: 1.3; }
+.strip .ib { width: 40px; height: 40px; border-radius: 12px; background: var(--green-soft); color: var(--green-d); display: grid; place-items: center; flex: none; }
+.strip .ib .ic { width: 22px; height: 22px; }
+
+/* the moment */
+.moment .grid { display: grid; gap: 32px; align-items: center; }
+.story { background: var(--card); border-radius: var(--r); padding: 26px 24px; border-left: 6px solid var(--amber); box-shadow: 0 1px 0 var(--line); }
+.story p { font-size: 20.5px; line-height: 1.6; }
+.story p + p { margin-top: 14px; }
+.story .hit { font-weight: 800; }
+.figure { margin: 0; background: var(--art); border-radius: var(--r); overflow: hidden; }
+.figure img { width: 100%; height: auto; aspect-ratio: 360 / 260; }
+.figure figcaption { font-size: 15.5px; color: var(--muted); padding: 10px 16px 14px; font-weight: 600; }
+.walls { display: grid; gap: 14px; margin-top: 36px; }
+.wall { display: flex; gap: 14px; background: var(--card); border: 2px solid var(--line); border-radius: 20px; padding: 18px; }
+.wall .ib { width: 42px; height: 42px; border-radius: 50%; background: var(--red-soft); color: var(--red-d); display: grid; place-items: center; flex: none; }
+.wall .ib .ic { width: 20px; height: 20px; stroke-width: 2.8; }
+.wall h3 { font-size: 20px; font-weight: 850; }
+.wall p { font-size: 17.5px; color: var(--muted); margin-top: 4px; }
+
+/* facts */
+.facts { background: var(--ink); color: #EEF2F7; }
+.facts h2 { color: #fff; }
+.facts .kicker { color: var(--amber); }
+.facts .lead { color: #D3DAE4; }
+.stats { display: grid; gap: 14px; margin-top: 34px; }
+.stat { background: #1F2B3C; border-radius: 20px; padding: 22px 22px 20px; }
+.stat b { display: block; font-size: 46px; line-height: 1; font-weight: 900; color: var(--amber); letter-spacing: -0.02em; }
+.stat p { margin-top: 10px; font-size: 18px; color: #E4E9F0; }
+.stat sup a { color: #AAB6C6; }
+.facts .close { margin-top: 34px; font-size: 22px; font-weight: 750; color: #fff; max-width: 34em; }
+.facts .close span { color: var(--amber); }
+
+/* solution */
+.solution { padding-bottom: 40px; }
+.rail { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 18px 22px; margin: 34px -18px 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.rail figure { margin: 0; scroll-snap-align: center; flex: 0 0 auto; width: 236px; }
+.rail .phone { width: 236px; border-radius: 40px; padding: 8px; }
+.rail .phone .scr { border-radius: 33px; }
+.rail figcaption { margin-top: 14px; }
+.rail figcaption b { display: block; font-size: 19px; line-height: 1.25; }
+.rail figcaption span { display: block; font-size: 16px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+.swipe { font-size: 15px; color: var(--muted); font-weight: 700; text-align: center; margin-top: 2px; }
+
+/* steps */
+.how { background: var(--card); }
+.steps { display: grid; gap: 16px; margin-top: 34px; counter-reset: s; }
+.step { position: relative; background: var(--bg); border-radius: var(--r); padding: 24px 22px 22px 22px; }
+.step .n { width: 48px; height: 48px; border-radius: 50%; background: var(--green-btn); color: #fff; display: grid; place-items: center; font-weight: 900; font-size: 22px; margin-bottom: 14px; }
+.step h3 { font-size: 22px; font-weight: 850; }
+.step p { font-size: 18px; margin-top: 8px; color: var(--muted); }
+
+/* features */
+.feats { display: grid; gap: 16px; margin-top: 34px; }
+.feat { background: var(--card); border: 2px solid var(--line); border-radius: var(--r); overflow: hidden; display: flex; flex-direction: column; }
+.feat .txt { padding: 20px 20px 22px; }
+.feat .ib { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; margin-bottom: 12px; background: var(--green-soft); color: var(--green-d); }
+.feat .ib.blue { background: #E8EFFF; color: var(--blue); }
+.feat .ib.red { background: var(--red); color: #fff; }
+.feat .ib.red .ic { fill: currentColor; stroke: none; }
+.feat h3 { font-size: 21px; font-weight: 850; }
+.feat p { font-size: 17.5px; color: var(--muted); margin-top: 6px; }
+.feat .shot { background: var(--bg); border-bottom: 2px solid var(--line); }
+.feat .shot img { width: 100%; height: auto; }
+.mid { margin-top: 40px; text-align: center; }
+.mid .btn { min-width: min(100%, 420px); }
+
+/* inside */
+.inside { background: var(--card); }
+.big3 { display: grid; gap: 16px; margin-top: 34px; }
+.card3 { background: var(--bg); border-radius: var(--r); overflow: hidden; }
+.card3 img { width: 100%; height: auto; aspect-ratio: 360 / 260; background: var(--art); }
+.card3 .txt { padding: 16px 20px 20px; }
+.card3 h3 { font-size: 21px; font-weight: 850; }
+.card3 p { font-size: 17px; color: var(--muted); margin-top: 4px; }
+.list21 { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.list21 li { display: flex; align-items: center; gap: 10px; background: var(--bg); border-radius: 14px; padding: 12px 14px; font-weight: 750; font-size: 17px; line-height: 1.25; }
+.list21 .ic { color: var(--green-d); width: 20px; height: 20px; stroke-width: 2.8; }
+.count21 { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 22px; font-weight: 800; font-size: 17px; color: var(--green-d); }
+
+/* nurse */
+.nurse .box { display: grid; gap: 26px; background: var(--card); border-radius: 28px; padding: 30px 24px; border: 2px solid var(--line); }
+.badge { width: 76px; height: 76px; }
+.nurse h2 { font-size: clamp(28px, 4vw, 40px); }
+.nurse p { font-size: 19px; margin-top: 14px; }
+.update { background: var(--green-soft); border-radius: 20px; padding: 20px 20px; }
+.update b.t { display: block; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--green-d); font-weight: 900; margin-bottom: 6px; }
+.update p { margin: 0; font-size: 18px; }
+.update img { width: 100%; height: auto; border-radius: 14px; margin-top: 14px; aspect-ratio: 360/260; background: var(--art); }
+
+/* who */
+.whos { display: grid; gap: 12px; margin-top: 30px; }
+.who { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border-radius: 20px; padding: 18px 18px; border: 2px solid var(--line); }
+.who .ib { width: 44px; height: 44px; border-radius: 13px; background: var(--amber-soft); color: #9A5B07; display: grid; place-items: center; flex: none; }
+.who h3 { font-size: 20px; font-weight: 850; }
+.who p { font-size: 17px; color: var(--muted); margin-top: 3px; }
+
+/* compare */
+.compare { background: var(--card); }
+.cmp { display: grid; gap: 16px; margin-top: 34px; }
+.opt { border: 2px solid var(--line); border-radius: var(--r); padding: 22px 20px; background: var(--bg); }
+.opt.us { border: 3px solid var(--green-btn); background: #fff; box-shadow: 0 22px 40px -28px rgba(14,122,78,.6); position: relative; }
+.opt .tag { display: inline-block; background: var(--green-btn); color: #fff; font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 8px; margin-bottom: 10px; }
+.opt h3 { font-size: 22px; font-weight: 850; }
+.opt .price { font-size: 17px; font-weight: 750; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+.opt.us .price { color: var(--green-d); font-size: 19px; }
+.opt ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 9px; }
+.opt li { display: flex; gap: 10px; font-size: 17px; line-height: 1.4; }
+.opt li .ic { width: 22px; height: 22px; margin-top: 1px; stroke-width: 2.8; }
+.opt li.y .ic { color: var(--green-d); }
+.opt li.n .ic { color: var(--red-d); }
+.advice { margin-top: 26px; background: var(--amber-soft); border-radius: 18px; padding: 18px 20px; font-size: 19px; font-weight: 650; }
+
+/* offer */
+.offer { padding-top: 70px; }
+.deal { max-width: 760px; margin: 30px auto 0; background: #fff; border-radius: 30px; border: 3px solid var(--green-btn); overflow: hidden; box-shadow: 0 34px 60px -36px rgba(22,32,46,.5); }
+.deal .head { background: var(--green-btn); color: #fff; padding: 16px 22px; font-weight: 850; font-size: 19px; text-align: center; letter-spacing: .01em; }
+.items { list-style: none; margin: 0; padding: 8px 20px; }
+.item { display: flex; gap: 14px; padding: 18px 0; border-bottom: 2px dashed var(--line); }
+.item:last-child { border-bottom: 0; }
+.item .ib { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; flex: none; background: var(--green-soft); color: var(--green-d); }
+.item .ib.app { background: var(--green-btn); color: #fff; }
+.item .ib .ic { width: 26px; height: 26px; }
+.item .lbl { font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--green-d); }
+.item .lbl.b { color: #9A5B07; }
+.item h3 { font-size: 20.5px; font-weight: 850; margin-top: 2px; }
+.item p { font-size: 16.5px; color: var(--muted); margin-top: 4px; }
+.item .note { display: block; margin-top: 8px; font-size: 15px; background: var(--soft); border-radius: 10px; padding: 8px 10px; color: var(--ink); }
+.pricebox { background: var(--bg); padding: 26px 22px 28px; text-align: center; border-top: 2px solid var(--line); }
+.anchor { font-size: 17px; color: var(--muted); max-width: 30em; margin: 0 auto; }
+.price { margin-top: 10px; }
+.pricebox .amt { display: block; font-size: 66px; font-weight: 900; letter-spacing: -0.03em; line-height: 1; margin-top: 8px; }
+.pricebox .once { display: block; font-size: 18px; font-weight: 750; margin-top: 6px; }
+.pricebox .btn { margin-top: 22px; }
+
+/* guarantee */
+.guar { padding-top: 30px; }
+.gbox { max-width: 760px; margin: 0 auto; display: grid; gap: 18px; justify-items: center; text-align: center; background: var(--card); border-radius: 28px; padding: 30px 24px; border: 2px solid var(--line); }
+.seal { width: 120px; height: 120px; }
+.gbox h2 { font-size: clamp(26px, 3.6vw, 36px); }
+.gbox p { font-size: 19px; max-width: 34em; }
+
+/* faq */
+.faq .list { margin-top: 26px; display: grid; gap: 12px; }
+details { background: var(--card); border: 2px solid var(--line); border-radius: 18px; }
+details[open] { border-color: #CFC8BA; }
+summary { list-style: none; cursor: pointer; padding: 18px 54px 18px 20px; font-size: 19.5px; font-weight: 800; line-height: 1.35; position: relative; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: ""; position: absolute; right: 20px; top: 50%; width: 12px; height: 12px; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: translateY(-70%) rotate(45deg); transition: transform .15s; }
+details[open] summary::after { transform: translateY(-30%) rotate(225deg); }
+details .a { padding: 0 20px 20px; font-size: 18px; color: #2D3747; }
+details .a p + p { margin-top: 10px; }
+
+/* final */
+.final { background: var(--ink); color: #fff; text-align: center; padding: 72px 0; }
+.final h2 { color: #fff; font-size: clamp(30px, 4.8vw, 48px); }
+.final p.lead { color: #D3DAE4; max-width: 32em; }
+.final .btn { margin-top: 30px; min-width: min(100%, 440px); }
+.final .under { color: #B9C3D1; }
+.final .under .ic { color: #6FD3A4; }
+
+/* footer */
+footer { padding: 44px 0 120px; font-size: 15.5px; color: var(--muted); }
+footer .disc { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 18px 20px; color: var(--ink); font-size: 16px; }
+footer .disc p + p { margin-top: 8px; }
+footer h3 { font-size: 17px; margin: 28px 0 10px; color: var(--ink); }
+footer ol { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
+footer ol a { overflow-wrap: anywhere; color: var(--green-d); }
+footer .copy { margin-top: 26px; }
+
+/* sticky mobile buy bar */
+.buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: rgba(255,255,255,.97); border-top: 1px solid var(--line); box-shadow: 0 -10px 30px -18px rgba(22,32,46,.45); padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px)); transform: translateY(110%); transition: transform .25s ease; }
+.buybar.show { transform: none; }
+.buybar .t { line-height: 1.25; min-width: 0; }
+.buybar .t b { display: block; font-size: 17px; }
+.buybar .t span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.buybar .btn { min-height: 54px; font-size: 18px; padding: 10px 20px; border-radius: 14px; flex: none; }
+
+/* wider screens */
+@media (min-width: 700px) {
+  body { font-size: 20px; }
+  .wrap { padding: 0 28px; }
+  section { padding: 84px 0; }
+  .strip ul { grid-template-columns: repeat(4, 1fr); }
+  .walls { grid-template-columns: 1fr 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .steps { grid-template-columns: repeat(3, 1fr); }
+  .feats { grid-template-columns: repeat(2, 1fr); }
+  .big3 { grid-template-columns: repeat(3, 1fr); }
+  .list21 { grid-template-columns: repeat(3, 1fr); }
+  .whos { grid-template-columns: 1fr 1fr; }
+  .cmp { grid-template-columns: 1fr 1fr; }
+  .rail { margin-left: -28px; margin-right: -28px; padding-left: 28px; padding-right: 28px; }
+  .nurse .box { padding: 40px; }
+}
+@media (min-width: 980px) {
+  .float { display: flex; }
+  .hero { padding: 26px 0 80px; }
+  .hero .wrap { grid-template-columns: 1.08fr .92fr; gap: 40px; }
+  .phones { height: 650px; max-width: 520px; }
+  .phones .front { width: 292px; right: 0; }
+  .phones .back { width: 240px; top: 70px; left: 2%; }
+  .float.f2 { top: 14px; left: -12px; }
+  .float.f1 { bottom: 96px; left: -12px; }
+  .moment .grid { grid-template-columns: 1.15fr .85fr; gap: 44px; }
+  .walls { grid-template-columns: repeat(4, 1fr); }
+  .wall { flex-direction: column; }
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .feats { grid-template-columns: repeat(3, 1fr); }
+  .list21 { grid-template-columns: repeat(4, 1fr); }
+  .whos { grid-template-columns: repeat(3, 1fr); }
+  .rail { justify-content: center; overflow: visible; }
+  .nurse .box { grid-template-columns: 1.2fr .8fr; align-items: center; gap: 40px; padding: 48px; }
+  .buybar { display: none; }
+  footer { padding-bottom: 60px; }
+}
+@media (max-width: 440px) {
+  .btn.big { font-size: 21px; padding: 14px 16px; }
+  .pricebox { padding-left: 16px; padding-right: 16px; }
+  .items { padding: 4px 16px; }
+}
+@media (max-width: 380px) {
+  .phones { height: 476px; }
+  .phones .front { width: 212px; }
+  .phones .back { width: 176px; }
+  .float { font-size: 14px; max-width: 180px; padding: 8px 10px; }
+  .list21 { grid-template-columns: 1fr; }
+  .buybar .t span { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Icon set used across the page -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v13M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 2.8 9.5 2l2 5-2.4 1.6a12 12 0 0 0 6.3 6.3l1.6-2.4 5 2-.8 2.9c-.3 1.1-1.3 1.8-2.4 1.7C10.4 18.6 5.4 13.6 4.9 5.2c-.1-1.1.6-2.1 1.7-2.4z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></symbol>
+  <symbol id="i-beat" viewBox="0 0 24 24"><path d="M2.5 12.5h4l2.2-5 4.3 10 2.2-5H21.5"/></symbol>
+  <symbol id="i-offline" viewBox="0 0 24 24"><path d="M2.5 8.8a14.5 14.5 0 0 1 19 0M5.8 12.2a9.6 9.6 0 0 1 12.4 0M9.2 15.6a4.7 4.7 0 0 1 5.6 0"/><circle cx="12" cy="19" r="1.2"/><path d="M3.5 3.5l17 17"/></symbol>
+  <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17.2" cy="9.4" r="2.4"/><path d="M15.6 14.3c3 .2 5.4 2.4 5.4 5.7"/></symbol>
+  <symbol id="i-baby" viewBox="0 0 24 24"><circle cx="12" cy="11" r="7.5"/><path d="M9.2 10.2h.01M14.8 10.2h.01M9.5 14c1.4 1.2 3.6 1.2 5 0M12 3.5c-1.5 0-2.2 1.4-1 2.4"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M3.5 18L8.5 6l5 12M5.3 14h6.4M14.5 18l3-7.5 3 7.5M15.5 16h4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.3 8.3-8 9-4.7-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4 7l8 6 8-6"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="17" rx="2"/><path d="M8 9l1.5 1.5L12 8M8 15l1.5 1.5L12 14M14.5 9.5h2.5M14.5 15.5h2.5"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><circle cx="8" cy="11" r="2.2"/><path d="M4.8 16c.6-1.7 1.8-2.6 3.2-2.6s2.6.9 3.2 2.6M14 10h5M14 13.5h4"/></symbol>
+  <symbol id="i-fridge" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M6 9.5h12M9 5.5v2M9 12.5v3"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M8.6 13.4L7.2 21l4.8-2.6 4.8 2.6-1.4-7.6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 5.5a3 3 0 0 0-5.6-1.3A3 3 0 0 0 4 8a3 3 0 0 0 0 5 3 3 0 0 0 2.4 4.3A3 3 0 0 0 12 18.5zM12 5.5a3 3 0 0 1 5.6-1.3A3 3 0 0 1 20 8a3 3 0 0 1 0 5 3 3 0 0 1-2.4 4.3A3 3 0 0 1 12 18.5z"/></symbol>
+  <symbol id="i-grand" viewBox="0 0 24 24"><circle cx="8" cy="6.5" r="2.8"/><path d="M3.5 21v-5.5A4.5 4.5 0 0 1 8 11a4.5 4.5 0 0 1 4.5 4.5M16.5 12.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM13.5 21v-2.5a3 3 0 0 1 6 0V21M21 21h0"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h13V9.5"/></symbol>
+  <symbol id="i-sitter" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M6 21v-4a6 6 0 0 1 12 0v4M9 21v-3M15 21v-3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="First Minutes">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#14935F"/><path d="M16 8h8v8h8v8h-8v8h-8v-8H8v-8h8z" fill="#fff"/></svg>
+      <span>First Minutes</span>
+    </a>
+    <a class="mini" href="#offer">Get it for $9.99</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- 1. HERO -->
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div>
+      <span class="pill"><span class="dot"></span>For grandparents, parents and anyone who watches the kids</span>
+      <h1 id="h1">If someone you love started <em>choking</em> right now, would you know what to do?</h1>
+      <p class="sub">First Minutes is a simple app on your phone that tells you exactly what to do, step by step, with clear pictures and a calm voice that reads every step out loud. So you can help until the ambulance arrives.</p>
+      <div class="cta">
+        <a class="btn block big" id="hero-cta" href="#offer"><span>Yes, I want to know what to do</span> <svg class="ic"><use href="#i-down"/></svg></a>
+        <div class="under"><span><svg class="ic"><use href="#i-check"/></svg>$9.99 one time</span><span><svg class="ic"><use href="#i-check"/></svg>Instant access</span><span><svg class="ic"><use href="#i-check"/></svg>7 day money back guarantee</span></div>
+      </div>
+      <ul class="ticks">
+        <li><svg class="ic"><use href="#i-check"/></svg>Written by a nurse</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>Follows the 2025 American Heart Association guidelines</li>
+        <li><svg class="ic"><use href="#i-check"/></svg>21 emergencies, for adults, children and babies</li>
+      </ul>
+    </div>
+    <div class="phones" aria-label="Screens from the First Minutes app">
+      <figure class="phone back"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-home.webp" width="600" height="1298" alt="The First Minutes home screen with a red Call 911 button, a search box and big buttons for each emergency"></div></figure>
+      <figure class="phone front"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-backblows.webp" width="600" height="1298" fetchpriority="high" alt="A First Minutes step screen: Give 5 back blows, with a picture showing where to hit and short instructions"></div></figure>
+      <div class="float f1"><span class="ib"><svg class="ic"><use href="#i-speaker"/></svg></span>A calm voice reads each step</div>
+      <div class="float f2"><span class="ib"><svg class="ic"><use href="#i-phone"/></svg></span>Call 911 from every screen</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. TRUST STRIP -->
+<div class="strip">
+  <div class="wrap">
+    <ul>
+      <li><span class="ib"><svg class="ic"><use href="#i-heart"/></svg></span>Written by a nurse</li>
+      <li><span class="ib"><svg class="ic"><use href="#i-speaker"/></svg></span>Reads every step out loud</li>
+      <li><span class="ib"><svg class="ic"><use href="#i-offline"/></svg></span>Works without internet</li>
+      <li><span class="ib"><svg class="ic"><use href="#i-app"/></svg></span>iPhone and Android</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 3. THE MOMENT (problem) -->
+<section class="moment">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <span class="kicker red">It happens in seconds</span>
+        <h2>It never happens when you’re ready.</h2>
+        <div class="story" style="margin-top:24px">
+          <p>You’re at the kitchen table. Your grandson takes a big bite and laughs at something his sister said. Then he stops.</p>
+          <p>His hands go to his throat. No cough. No sound. His face starts to change color.</p>
+          <p class="hit">And everyone in the room turns to look at you.</p>
+          <p>Your heart is pounding. Your hands are shaking. Everything you once learned is suddenly gone.</p>
+        </div>
+      </div>
+      <figure class="figure">
+        <img src="img/art-chokeSign.svg" width="360" height="260" loading="lazy" alt="Drawing of a person holding their throat while another person asks: Are you choking?">
+        <figcaption>Hands at the throat and no sound: the universal sign of choking. First Minutes shows you what to do next.</figcaption>
+      </figure>
+    </div>
+
+    <div class="walls">
+      <div class="wall"><span class="ib"><svg class="ic"><use href="#i-x"/></svg></span><div><h3>Panic wipes your memory</h3><p>Under stress, even simple steps you once knew can disappear.</p></div></div>
+      <div class="wall"><span class="ib"><svg class="ic"><use href="#i-x"/></svg></span><div><h3>Googling takes too long</h3><p>Shaking hands, tiny text, ads, and ten different answers.</p></div></div>
+      <div class="wall"><span class="ib"><svg class="ic"><use href="#i-x"/></svg></span><div><h3>Your class was years ago</h3><p>And in October 2025 the advice for choking adults changed.<sup><a href="#src5">5</a></sup></p></div></div>
+      <div class="wall"><span class="ib"><svg class="ic"><use href="#i-x"/></svg></span><div><h3>Help is minutes away</h3><p>After a 911 call, the median wait for an ambulance is 7 minutes. In rural areas, 13.<sup><a href="#src2">2</a></sup></p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. THE FACTS (agitation) -->
+<section class="facts">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">The hard truth</span>
+      <h2>The first minutes belong to whoever is in the room.</h2>
+      <p class="lead">Emergencies don’t wait for a doctor to be nearby. Most cardiac arrests outside the hospital happen at home, in front of the people who love us most.<sup><a href="#src1">1</a></sup></p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>73%</b><p>of cardiac arrests outside the hospital happen at home.<sup><a href="#src1">1</a></sup></p></div>
+      <div class="stat"><b>350,000+</b><p>Americans have a cardiac arrest outside the hospital every year.<sup><a href="#src1">1</a></sup></p></div>
+      <div class="stat"><b>4 in 10</b><p>Only about 4 in 10 people whose heart stops outside the hospital get CPR from someone nearby before help arrives.<sup><a href="#src1">1</a></sup></p></div>
+      <div class="stat"><b>2x to 3x</b><p>Immediate CPR can double or triple the chance of survival.<sup><a href="#src1">1</a></sup></p></div>
+      <div class="stat"><b>5,553</b><p>people in the US died from choking in 2022. It is the 4th leading cause of accidental injury death.<sup><a href="#src3">3</a></sup></p></div>
+      <div class="stat"><b>7 min</b><p>is the median time for an ambulance to arrive after a 911 call. 13 minutes in rural areas.<sup><a href="#src2">2</a></sup></p></div>
+    </div>
+    <p class="close">Every minute counts: the American Red Cross says survival chances drop by 10% for every minute that CPR and an AED are delayed.<sup><a href="#src4">4</a></sup></p>
+    <p class="close">Nobody expects you to be a nurse or a paramedic. <span>You just need to know the next step. And then the one after that.</span></p>
+  </div>
+</section>
+
+<!-- 5. THE SOLUTION -->
+<section class="solution">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">Meet First Minutes</span>
+      <h2>Clear pictures and a calm voice, right on your phone, telling you exactly what to do.</h2>
+      <p class="lead">You tap what’s happening. First Minutes walks you through it one step at a time: one picture, a few short words, and a calm human voice reading each step out loud. So your eyes and hands can stay on the person who needs you.</p>
+    </div>
+    <div class="rail" tabindex="0" aria-label="App screens">
+      <figure>
+        <div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-check.webp" width="600" height="1298" loading="lazy" alt="App screen asking: Can they cough, talk or breathe? with two big answer buttons"></div></div>
+        <figcaption><b>It asks one simple question</b><span>Can they cough, talk or breathe? Your answer opens the right steps.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-belly.webp" width="600" height="1298" loading="lazy" alt="App screen: Give 5 belly thrusts, with a picture showing where to put your fist"></div></div>
+        <figcaption><b>It shows you exactly how</b><span>Where to stand, where to put your hands, how many times.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-babyback.webp" width="600" height="1298" loading="lazy" alt="App screen for a choking baby: face down, 5 back blows, with a drawing of a baby held along the forearm"></div></div>
+        <figcaption><b>Babies get their own steps</b><span>A baby needs different, gentler moves. You’ll see them clearly.</span></figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><div class="scr"><div class="sb"><span></span></div><img src="img/screen-cprpush.webp" width="600" height="1298" loading="lazy" alt="App screen for CPR: Push hard and fast, with the CPR beat counting pushes"></div></div>
+        <figcaption><b>It keeps your CPR rhythm</b><span>Push on every beat. It counts to 30 and tells you when to give breaths.</span></figcaption>
+      </figure>
+    </div>
+    <p class="swipe" id="swipe">Swipe to see more screens <svg class="ic" style="display:inline;vertical-align:-5px;width:20px;height:20px"><use href="#i-arrow"/></svg></p>
+  </div>
+</section>
+
+<!-- 6. HOW IT WORKS -->
+<section class="how">
+  <div class="wrap">
+    <div class="narrow center" style="margin:0 auto">
+      <span class="kicker">How it works</span>
+      <h2>Ready in 2 minutes. Simple enough to use with shaking hands.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Save it on your phone today</h3><p>Right after you buy, you get an email with your link. Open it and tap Add to Home Screen. It sits next to your other apps and opens even with no signal.</p></div>
+      <div class="step"><div class="n">2</div><h3>When something happens, tap what you see</h3><p>Big buttons with pictures. Or type it in plain words, like “food stuck” or “passed out”.</p></div>
+      <div class="step"><div class="n">3</div><h3>Follow along until help arrives</h3><p>One step per screen, read out loud for you. The red Call 911 button is always at the top.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. FEATURES -->
+<section class="features">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">Made for the moment itself</span>
+      <h2>Built for the scariest minutes of your life.</h2>
+      <p class="lead">Not for reading ahead. Not for a classroom. For the moment when you need it most.</p>
+    </div>
+    <div class="feats">
+      <div class="feat">
+        <div class="shot"><img src="img/crop-header.webp" width="640" height="139" loading="lazy" alt="The top of every step screen: home button, sound button and a red 911 button"></div>
+        <div class="txt"><span class="ib blue"><svg class="ic"><use href="#i-speaker"/></svg></span><h3>A calm voice reads every step</h3><p>You don’t have to read while you help. Keep your eyes on them and just listen.</p></div>
+      </div>
+      <div class="feat">
+        <div class="shot"><img src="img/crop-metro.webp" width="640" height="384" loading="lazy" alt="The CPR beat: a big blue button counting pushes, with a timer"></div>
+        <div class="txt"><span class="ib blue"><svg class="ic"><use href="#i-beat"/></svg></span><h3>A CPR beat to push to</h3><p>It ticks at 110 pushes a minute, counts to 30 and tells you when to give 2 breaths. Never trained? Just keep pushing to the beat.</p></div>
+      </div>
+      <div class="feat">
+        <div class="shot"><img src="img/crop-search.webp" width="640" height="350" loading="lazy" alt="Typing food stuck in the search box brings up Choking"></div>
+        <div class="txt"><span class="ib"><svg class="ic"><use href="#i-search"/></svg></span><h3>Search in plain words</h3><p>Type “food stuck”, “passed out” or “deep cut”. No medical words needed.</p></div>
+      </div>
+      <div class="feat">
+        <div class="txt"><span class="ib red"><svg class="ic"><use href="#i-phone"/></svg></span><h3>A big red Call 911 button on every screen</h3><p>One tap starts the call from any step. Put the phone on speaker and the 911 dispatcher can help you too.</p></div>
+      </div>
+      <div class="feat">
+        <div class="txt"><span class="ib"><svg class="ic"><use href="#i-offline"/></svg></span><h3>Works without internet</h3><p>Once it’s saved on your home screen, it opens in a basement, at the lake, or anywhere the signal drops.</p></div>
+      </div>
+      <div class="feat">
+        <div class="txt"><span class="ib"><svg class="ic"><use href="#i-text"/></svg></span><h3>Big text, one step at a time</h3><p>Large words and pictures. Nothing to memorize, no menus to learn. Just press Next.</p></div>
+      </div>
+    </div>
+    <div class="mid">
+      <a class="btn big" href="#offer">Get First Minutes for $9.99 <svg class="ic"><use href="#i-down"/></svg></a>
+      <div class="under"><span><svg class="ic"><use href="#i-check"/></svg>One time payment</span><span><svg class="ic"><use href="#i-check"/></svg>7 day money back guarantee</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. WHAT'S INSIDE -->
+<section class="inside">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">What’s inside</span>
+      <h2>21 emergencies, from choking to heat stroke.</h2>
+      <p class="lead">The ones that happen at home, at the park and at family dinners. Each one with its own pictures, voice and steps.</p>
+    </div>
+    <div class="big3">
+      <div class="card3"><img src="img/art-backBlows.svg" width="360" height="260" loading="lazy" alt="Drawing: a helper gives back blows to a choking adult who is leaning forward"><div class="txt"><h3>Choking</h3><p>Adult, child and baby, with the 2025 back blow and thrust steps.</p></div></div>
+      <div class="card3"><img src="img/art-cprPush.svg" width="360" height="260" loading="lazy" alt="Drawing: a helper pushes on the center of the chest of a person lying on the floor"><div class="txt"><h3>Not breathing (CPR)</h3><p>Adult, child and baby, with the CPR beat to keep your rhythm.</p></div></div>
+      <div class="card3"><img src="img/art-cprPushBaby.svg" width="360" height="260" loading="lazy" alt="Drawing: the heel of one hand pushing on the center of a baby’s chest"><div class="txt"><h3>Babies under 1</h3><p>Separate steps and drawings for the smallest ones.</p></div></div>
+    </div>
+    <ul class="list21" aria-label="The other emergencies included">
+      <li><svg class="ic"><use href="#i-check"/></svg>Heavy bleeding</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Heart attack</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Stroke</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Fainting</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Seizure</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Allergic reaction</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Asthma attack</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Low blood sugar</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Burns</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Poisoning</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Head injury</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Broken bone</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Nosebleed</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Drowning</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Heat stroke</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Hypothermia</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Electric shock</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Dog bite</li>
+      <li><svg class="ic"><use href="#i-check"/></svg>Eye injury</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 9. WRITTEN BY A NURSE -->
+<section class="nurse">
+  <div class="wrap">
+    <div class="box">
+      <div>
+        <svg class="badge" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#14935F"/><path d="M16 8h8v8h8v8h-8v8h-8v-8H8v-8h8z" fill="#fff"/></svg>
+        <span class="kicker" style="margin-top:18px">Who made it</span>
+        <h2>Written by a nurse. Built on the guidelines the professionals use.</h2>
+        <p>Every step in First Minutes was written by a nurse and follows the 2025 American Heart Association guidelines for CPR and first aid, American Red Cross first aid, and Stop the Bleed.</p>
+        <p>The hard part wasn’t the medicine. It was making it simple: short words, one action per screen, and nothing you have to remember.</p>
+      </div>
+      <div class="update">
+        <b class="t">Up to date with 2025</b>
+        <p>In October 2025 the American Heart Association changed its advice for a choking adult or child: give 5 back blows, then 5 belly thrusts, and repeat.<sup><a href="#src5">5</a></sup> If you learned it another way, First Minutes shows you the new way.</p>
+        <img src="img/art-bellyThrusts.svg" width="360" height="260" loading="lazy" alt="Drawing: a helper stands behind a choking person and gives belly thrusts, in and up">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. WHO IT'S FOR -->
+<section class="whofor" style="padding-top:0">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">Who it’s for</span>
+      <h2>For anyone who would be the first one there.</h2>
+    </div>
+    <div class="whos">
+      <div class="who"><span class="ib"><svg class="ic"><use href="#i-grand"/></svg></span><div><h3>Grandparents</h3><p>Who watch the grandkids and want to feel ready, not nervous.</p></div></div>
+      <div class="who"><span class="ib"><svg class="ic"><use href="#i-baby"/></svg></span><div><h3>Parents of little ones</h3><p>Babies and toddlers put everything in their mouths.</p></div></div>
+      <div class="who"><span class="ib"><svg class="ic"><use href="#i-heart"/></svg></span><div><h3>Husbands, wives and partners</h3><p>Who live with someone older or with a health condition.</p></div></div>
+      <div class="who"><span class="ib"><svg class="ic"><use href="#i-home"/></svg></span><div><h3>Adult children</h3><p>Who look after an aging mom or dad.</p></div></div>
+      <div class="who"><span class="ib"><svg class="ic"><use href="#i-sitter"/></svg></span><div><h3>Babysitters and caregivers</h3><p>Anyone trusted with someone else’s child.</p></div></div>
+      <div class="who"><span class="ib"><svg class="ic"><use href="#i-cal"/></svg></span><div><h3>Anyone whose class was years ago</h3><p>Or who never took one at all.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. COMPARISON -->
+<section class="compare">
+  <div class="wrap">
+    <div class="narrow">
+      <span class="kicker">How it compares</span>
+      <h2>What will actually be with you when it happens?</h2>
+    </div>
+    <div class="cmp">
+      <div class="opt us">
+        <span class="tag">Best for the moment</span>
+        <h3>First Minutes</h3>
+        <p class="price">$9.99 one time</p>
+        <ul>
+          <li class="y"><svg class="ic"><use href="#i-check"/></svg><span>In your pocket when it happens</span></li>
+          <li class="y"><svg class="ic"><use href="#i-check"/></svg><span>21 emergencies, adult, child and baby</span></li>
+          <li class="y"><svg class="ic"><use href="#i-check"/></svg><span>Reads every step out loud</span></li>
+          <li class="y"><svg class="ic"><use href="#i-check"/></svg><span>Works without internet</span></li>
+        </ul>
+      </div>
+      <div class="opt">
+        <h3>A hands on CPR class</h3>
+        <p class="price">$115 for a Red Cross adult and pediatric first aid and CPR class near Washington, DC<sup><a href="#src6">6</a></sup></p>
+        <ul>
+          <li class="y"><svg class="ic"><use href="#i-check"/></svg><span>Real practice with an instructor (we recommend it)</span></li>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>You book a date and go in person</span></li>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>Skills fade: the Red Cross itself says that if you don’t use them, you’re likely to lose them<sup><a href="#src6">6</a></sup></span></li>
+        </ul>
+      </div>
+      <div class="opt">
+        <h3>Searching online</h3>
+        <p class="price">Free</p>
+        <ul>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>Typing with shaking hands</span></li>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>Ads, long articles and mixed answers</span></li>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>Needs a signal and keeps no CPR rhythm</span></li>
+        </ul>
+      </div>
+      <div class="opt">
+        <h3>An anti choking device</h3>
+        <p class="price">About $70 for a popular home kit<sup><a href="#src7">7</a></sup></p>
+        <ul>
+          <li class="y"><svg class="ic"><use href="#i-check"/></svg><span>Can be kept in a drawer at home</span></li>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>Choking only: no help for CPR, a stroke or a seizure</span></li>
+          <li class="n"><svg class="ic"><use href="#i-x"/></svg><span>Only helps if it’s within reach</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="advice">Our honest advice: take a hands on class when you can. And keep First Minutes on your phone for the moment itself.</p>
+    <div class="mid">
+      <a class="btn big" href="#offer">Yes, I want to be ready <svg class="ic"><use href="#i-down"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- 12. OFFER -->
+<section class="offer" id="offer">
+  <div class="wrap">
+    <div class="narrow center" style="margin:0 auto">
+      <span class="kicker">Everything you get today</span>
+      <h2>First Minutes, plus 4 bonuses for the whole family.</h2>
+    </div>
+    <div class="deal">
+      <div class="head">Instant access on your phone</div>
+      <ul class="items">
+        <li class="item">
+          <span class="ib app"><svg class="ic"><use href="#i-app"/></svg></span>
+          <div><span class="lbl">The app</span><h3>First Minutes</h3><p>Step by step help for 21 emergencies, with pictures, a calm voice, the CPR beat, plain word search and a Call 911 button on every screen. For iPhone and Android, even offline.</p></div>
+        </li>
+        <li class="item">
+          <span class="ib"><svg class="ic"><use href="#i-list"/></svg></span>
+          <div><span class="lbl b">Bonus 1</span><h3>Home Medicine Cabinet &amp; First Aid Kit Checklist</h3><p>What to keep at home for emergencies, and where to keep it so anyone can find it fast.</p></div>
+        </li>
+        <li class="item">
+          <span class="ib"><svg class="ic"><use href="#i-card"/></svg></span>
+          <div><span class="lbl b">Bonus 2</span><h3>Family Emergency Card</h3><p>A printable card for allergies, medicines, health conditions and emergency contacts. One for the fridge, one for the wallet, so the answers are ready when paramedics ask.</p></div>
+        </li>
+        <li class="item">
+          <span class="ib"><svg class="ic"><use href="#i-fridge"/></svg></span>
+          <div><span class="lbl b">Bonus 3</span><h3>Babysitter &amp; Grandparent Fridge Cards</h3><p>Printable quick cards for whoever is watching the kids, with the key steps and the numbers to call.</p></div>
+        </li>
+        <li class="item">
+          <span class="ib"><svg class="ic"><use href="#i-award"/></svg></span>
+          <div><span class="lbl b">Bonus 4</span><h3>Certificate of Completion</h3><p>Take a short quiz in the app and get a certificate of completion with your name on it.</p><span class="note">To be clear: this is not a CPR card. It is not from the American Heart Association, the Red Cross or OSHA, and it won’t meet job or school requirements. It simply shows you took the time to learn.</span></div>
+        </li>
+      </ul>
+      <div class="pricebox">
+        <p class="anchor">A hands on class can cost $115.<sup><a href="#src6">6</a></sup> A popular anti choking kit costs about $70.<sup><a href="#src7">7</a></sup> Today you get everything above for</p>
+        <span class="amt">$9.99</span>
+        <span class="once">One time payment. No subscription.</span>
+        <a class="btn block big" href="#offer" data-checkout>Get First Minutes now <svg class="ic"><use href="#i-arrow"/></svg></a>
+        <div class="under"><span><svg class="ic"><use href="#i-lock"/></svg>Secure checkout by Hotmart</span><span><svg class="ic"><use href="#i-mail"/></svg>Access by email right after you pay</span><span><svg class="ic"><use href="#i-shield"/></svg>7 day money back guarantee</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. GUARANTEE -->
+<section class="guar">
+  <div class="wrap">
+    <div class="gbox">
+      <svg class="seal" viewBox="0 0 120 120" role="img" aria-label="7 day money back guarantee seal">
+        <circle cx="60" cy="60" r="57" fill="#14935F"/><circle cx="60" cy="60" r="48" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="4 5"/>
+        <text x="60" y="58" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="30" font-weight="900" fill="#fff" textLength="74" lengthAdjust="spacingAndGlyphs">7 DAY</text>
+        <text x="60" y="80" text-anchor="middle" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="11.5" font-weight="800" fill="#fff" textLength="72" lengthAdjust="spacingAndGlyphs">MONEY BACK</text>
+      </svg>
+      <h2>Try it for 7 days. If it’s not for you, you get every cent back.</h2>
+      <p>Open it, save it on your phone and walk through the steps with your family. If for any reason it’s not for you, ask for a refund within 7 days and you get your $9.99 back. No hard feelings.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 14. FAQ -->
+<section class="faq">
+  <div class="wrap narrow">
+    <span class="kicker">Questions</span>
+    <h2>Good questions, honest answers</h2>
+    <div class="list">
+      <details>
+        <summary>Does this replace a CPR class?</summary>
+        <div class="a"><p>No. A hands on class lets you practice on a mannequin with an instructor, and we encourage everyone to take one. First Minutes is for the moment itself: it walks you through the steps when your memory and your nerves are not at their best.</p></div>
+      </details>
+      <details>
+        <summary>Is the certificate an official CPR card?</summary>
+        <div class="a"><p>No. The Certificate of Completion only shows that you finished the short quiz in the app. It is not from the American Heart Association, the Red Cross or OSHA, and it won’t meet job or school requirements. If you need an official card for work, take an approved hands on class.</p></div>
+      </details>
+      <details>
+        <summary>Does it work without internet?</summary>
+        <div class="a"><p>Yes. Save it to your home screen and open it once while you have internet. After that it opens, shows the pictures and reads the steps even with no signal.</p></div>
+      </details>
+      <details>
+        <summary>Does it work on iPhone and Android?</summary>
+        <div class="a"><p>Yes. It works on iPhone and Android phones, and on tablets and computers too. There is nothing to download from an app store.</p></div>
+      </details>
+      <details>
+        <summary>How do I get it?</summary>
+        <div class="a"><p>Right after you pay, you get an email with your access link. Open it on your phone and tap Add to Home Screen. It takes about a minute, and the email shows you how.</p></div>
+      </details>
+      <details>
+        <summary>Is it a subscription?</summary>
+        <div class="a"><p>No. You pay $9.99 once. There are no monthly fees.</p></div>
+      </details>
+      <details>
+        <summary>I’m not good with phones. Will I manage?</summary>
+        <div class="a"><p>Yes. There are no menus to learn. You tap the picture of what’s happening and press Next. The voice reads each step to you, and the text is big.</p></div>
+      </details>
+      <details>
+        <summary>What happens when I press Call 911?</summary>
+        <div class="a"><p>Your phone starts a call to 911 (some phones ask you to confirm first). Put it on speaker, keep it next to you and keep following the steps. The dispatcher can help you too.</p></div>
+      </details>
+      <details>
+        <summary>Who wrote it?</summary>
+        <div class="a"><p>A nurse. Every step follows the 2025 American Heart Association guidelines, American Red Cross first aid and Stop the Bleed.</p></div>
+      </details>
+      <details>
+        <summary>What if I don’t like it?</summary>
+        <div class="a"><p>You have 7 days to ask for a full refund through Hotmart, for any reason.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- 15. FINAL CTA -->
+<section class="final" id="final">
+  <div class="wrap narrow">
+    <h2>One day, someone may look at you and need you to know what to do.</h2>
+    <p class="lead">You can’t choose when it happens. But you can decide, today, that you won’t be the one standing there not knowing. For $9.99, the next step will always be in your pocket.</p>
+    <a class="btn big" href="#offer" data-checkout>Get First Minutes for $9.99 <svg class="ic"><use href="#i-arrow"/></svg></a>
+    <div class="under"><span><svg class="ic"><use href="#i-check"/></svg>Instant access</span><span><svg class="ic"><use href="#i-check"/></svg>7 day money back guarantee</span></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap narrow">
+    <div class="disc">
+      <p><b>Important:</b> First Minutes is a first aid guide for the general public. It helps you know what to do, but it does not replace calling 911, a doctor, or a hands on CPR and first aid class, and no guide can promise how an emergency will end. In an emergency, call 911 first.</p>
+      <p>First Minutes is not affiliated with or endorsed by the American Heart Association, the American Red Cross or Stop the Bleed.</p>
+    </div>
+    <h3 id="sources">Sources</h3>
+    <ol>
+      <li id="src1">American Heart Association, CPR Facts and Stats: more than 350,000 cardiac arrests outside the hospital each year; 73.4% happen in homes; about 40% get bystander CPR; immediate CPR can double or triple the chance of survival. <a href="https://cpr.heart.org/en/resources/cpr-facts-and-stats" rel="noopener" target="_blank">cpr.heart.org/en/resources/cpr-facts-and-stats</a></li>
+      <li id="src2">Mell HK, et al. Emergency Medical Services Response Times in Rural, Suburban, and Urban Areas. JAMA Surgery, 2017 (median 7 minutes overall, 13 minutes rural). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5831456/" rel="noopener" target="_blank">pmc.ncbi.nlm.nih.gov/articles/PMC5831456</a></li>
+      <li id="src3">National Safety Council, Choking: 5,553 people died from choking in 2022; choking is the fourth leading cause of unintentional injury death. <a href="https://www.nsc.org/home-safety/safety-topics/choking-suffocation" rel="noopener" target="_blank">nsc.org/home-safety/safety-topics/choking-suffocation</a></li>
+      <li id="src4">American Red Cross, CPR Facts and Statistics: survival chances decrease by 10% for every minute that immediate CPR and use of an AED is delayed. <a href="https://www.redcross.org/take-a-class/resources/articles/cpr-facts-and-statistics" rel="noopener" target="_blank">redcross.org/take-a-class/resources/articles/cpr-facts-and-statistics</a></li>
+      <li id="src5">American Heart Association, Updated CPR guidelines aim to save more lives (October 2025): for a conscious adult or child who is choking, alternate 5 back blows and 5 abdominal thrusts. <a href="https://www.heart.org/en/healthy-living/live-fierce/updated-cpr-guidelines-aim-to-save-more-lives" rel="noopener" target="_blank">heart.org/en/healthy-living/live-fierce/updated-cpr-guidelines-aim-to-save-more-lives</a></li>
+      <li id="src6">American Red Cross, CPR Training and class search: Adult and Pediatric First Aid/CPR/AED classroom class near Washington, DC listed at $115 on October 24, 2026; “if you don’t use your skills regularly, you’re likely to lose them.” <a href="https://www.redcross.org/take-a-class/cpr" rel="noopener" target="_blank">redcross.org/take-a-class/cpr</a></li>
+      <li id="src7">Price of a popular anti choking suction home kit ($69.99), checked October 24, 2026. <a href="https://lifevac.net/" rel="noopener" target="_blank">lifevac.net</a></li>
+    </ol>
+    <p class="copy">© 2026 First Minutes. Sold and delivered through Hotmart.</p>
+    <!-- PRIVACY POLICY / TERMS / CONTACT LINKS GO HERE once the owner provides them. -->
+  </div>
+</footer>
+
+<div class="buybar" id="buybar" aria-hidden="true">
+  <div class="t"><b>First Minutes</b><span>$9.99 one time · 7 day guarantee</span></div>
+  <a class="btn" href="#offer" tabindex="-1">Get it now</a>
+</div>
+
+<script>
+// Paste the Hotmart checkout link here. Every checkout button on the page uses it.
+const CHECKOUT_URL = '#offer';
+
+(function () {
+  // Checkout buttons: carry the ad's tracking parameters (utm_*, src, sck...) over to the checkout link.
+  function withParams(url) {
+    try {
+      if (!/^https?:/i.test(url)) return url;
+      const u = new URL(url), p = new URLSearchParams(location.search);
+      p.forEach(function (v, k) { if (!u.searchParams.has(k)) u.searchParams.set(k, v); });
+      return u.toString();
+    } catch (e) { return url; }
+  }
+  document.querySelectorAll('[data-checkout]').forEach(function (a) { a.href = withParams(CHECKOUT_URL); });
+
+  // Sticky buy bar on phones: shows after the hero button, hides over the offer and the final call.
+  const bar = document.getElementById('buybar'), hero = document.getElementById('hero-cta');
+  const hide = [document.getElementById('offer'), document.getElementById('final')];
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const vh = window.innerHeight;
+    const past = hero.getBoundingClientRect().bottom < 0;
+    const over = hide.some(function (el) { const r = el.getBoundingClientRect(); return r.top < vh && r.bottom > 0; });
+    const show = past && !over;
+    bar.classList.toggle('show', show);
+    bar.setAttribute('aria-hidden', show ? 'false' : 'true');
+    bar.querySelector('a').tabIndex = show ? 0 : -1;
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+
+  // Hide the swipe hint where all screens fit side by side.
+  const rail = document.querySelector('.rail'), hint = document.getElementById('swipe');
+  function hintCheck() { hint.style.display = rail.scrollWidth > rail.clientWidth + 4 ? '' : 'none'; }
+  window.addEventListener('resize', hintCheck); hintCheck();
+})();
+</script>
+</body>
+</html>

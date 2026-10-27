@@ -363,6 +363,23 @@ footer .copy { margin-top: 26px; }
   .list21 { grid-template-columns: 1fr; }
   .buybar .t span { display: none; }
 }
+
+/* Customer experiences, in the original First Minutes palette. */
+.reviews{background:var(--bg)}
+.review-head{max-width:760px;margin:0 auto 30px;text-align:center}
+.review-head .lead{font-size:19px}
+.review-controls{display:flex;justify-content:flex-end;gap:10px;margin:0 0 14px}
+.review-arrow{width:48px;height:48px;display:grid;place-items:center;border:2px solid var(--line);border-radius:50%;background:var(--card);color:var(--ink);font:800 25px/1 system-ui;cursor:pointer;box-shadow:0 5px 14px -10px rgba(22,32,46,.35)}
+.review-arrow:hover,.review-arrow:focus-visible{border-color:var(--green);color:var(--green-d);outline-offset:3px}
+.review-scroller{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px 20px}
+.review-scroller::-webkit-scrollbar{display:none}
+.review-card{margin:0;flex:0 0 min(79vw,330px);scroll-snap-align:start;background:var(--card);border-radius:22px;overflow:hidden;border:1px solid var(--line);box-shadow:0 14px 30px -22px rgba(22,32,46,.28)}
+.review-card img{display:block;width:100%;height:auto;aspect-ratio:720/1279;background:var(--art)}
+.review-card figcaption{text-align:center;padding:14px 12px 16px;border-top:1px solid var(--line);font-size:18px;font-weight:800}
+.review-card figcaption small{display:block;font-size:15px;font-weight:600;color:var(--muted);margin-top:2px}
+@media(min-width:800px){.review-card{flex-basis:330px}}
+@media(prefers-reduced-motion:reduce){.review-scroller{scroll-behavior:auto}}
+
 </style>
 </head>
 <body>
@@ -739,6 +756,30 @@ footer .copy { margin-top: 26px; }
   </div>
 </section>
 
+
+<!-- CUSTOMER REVIEWS: original customer conversations -->
+<section class="reviews" id="customer-reviews" aria-labelledby="customer-reviews-title">
+ <div class="wrap">
+  <div class="review-head">
+   <span class="kicker">Real customer experiences</span>
+   <h2 id="customer-reviews-title">What people are saying about First Minutes</h2>
+   <p class="lead">What mattered to them when they needed clear guidance.</p>
+  </div>
+  <div class="review-controls">
+   <button class="review-arrow" type="button" data-review-direction="-1" aria-controls="firstminutes-review-track" aria-label="Previous review">&#8592;</button>
+   <button class="review-arrow" type="button" data-review-direction="1" aria-controls="firstminutes-review-track" aria-label="Next review">&#8594;</button>
+  </div>
+  <div class="review-scroller" id="firstminutes-review-track" aria-label="Customer review screenshots" tabindex="0">
+   <figure class="review-card"><img src="img/reviews/rachel.webp" width="720" height="1279" loading="lazy" decoding="async" alt="Rachel Bennett describes how First Minutes helped her stay calm when her son cut his hand"><figcaption>Rachel Bennett<small>Help when it mattered</small></figcaption></figure>
+   <figure class="review-card"><img src="img/reviews/jason.webp" width="720" height="1279" loading="lazy" decoding="async" alt="Jason Miller explains how he used First Minutes first aid instructions when a friend burned his hand"><figcaption>Jason Miller<small>Clear first aid steps</small></figcaption></figure>
+   <figure class="review-card"><img src="img/reviews/michael.webp" width="720" height="1279" loading="lazy" decoding="async" alt="Michael Brooks describes finding First Minutes useful when his father became dizzy at a cookout"><figcaption>Michael Brooks<small>Guidance in an emergency</small></figcaption></figure>
+   <figure class="review-card"><img src="img/reviews/daniel.webp" width="720" height="1279" loading="lazy" decoding="async" alt="Daniel Foster explains how simple guides and voice instructions helped him remember his CPR training"><figcaption>Daniel Foster<small>Easy to follow instructions</small></figcaption></figure>
+   <figure class="review-card"><img src="img/reviews/emily.webp" width="720" height="1279" loading="lazy" decoding="async" alt="Emily Parker discusses easy navigation and offline access for her parents"><figcaption>Emily Parker<small>Simple to use, even offline</small></figcaption></figure>
+   <figure class="review-card"><img src="img/reviews/ashley.webp" width="720" height="1279" loading="lazy" decoding="async" alt="Ashley Thompson explains why having emergency guidance in one place was worth it"><figcaption>Ashley Thompson<small>Everything in one place</small></figcaption></figure>
+  </div>
+ </div>
+</section>
+
 <!-- 13. OFFER -->
 <section class="offer" id="offer">
   <div class="wrap">
@@ -927,6 +968,23 @@ const CHECKOUT_URL = '#offer';
   function hintCheck() { hint.style.display = rail.scrollWidth > rail.clientWidth + 4 ? '' : 'none'; }
   window.addEventListener('resize', hintCheck); hintCheck();
 })();
+
+document.querySelectorAll('[data-review-direction]').forEach(function(button){
+  button.addEventListener('click',function(){
+    var track=document.getElementById('firstminutes-review-track');
+    if(!track)return;
+    var slide=track.querySelector('.review-card');
+    if(!slide)return;
+    var gap=parseFloat(getComputedStyle(track).gap)||18;
+    var amount=slide.getBoundingClientRect().width+gap;
+    var dir=Number(button.getAttribute('data-review-direction'))||1;
+    var end=Math.max(0,track.scrollWidth-track.clientWidth);
+    var next=track.scrollLeft+dir*amount;
+    var target=next<0?end:next>end+amount/2?0:Math.max(0,Math.min(end,next));
+    track.scrollTo({left:target,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  });
+});
+
 </script>
 </body>
 </html>
